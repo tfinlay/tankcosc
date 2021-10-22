@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+    
+<style type="text/css">
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content .players {
+        flex-basis: 100px;
+    }
+
+    .content .tanks {
+        flex: 1;
+    }
+</style>
+
+<div class="content">
+    <div id="players" class="players"></div>
+    <div id="tanks" class="tanks"></div>
+</div>
+
+<script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+<script> 
+    const socket = io();
+    const playersEl = document.getElementById("players")
+    const tanksEl = document.getElementById("tanks")
+
+    socket.on("loginError", (message) => {
+        console.warn(`Login Error: ${message}`)
+    })
+    socket.on("requestLogin", () => {
+        console.log("Login Requested")
+        socket.emit("login", "observer", window.location.search.slice(1))
+    })
+    socket.on("update", (players, tanks) => {
+        console.log("Update")
+        console.log(players)
+        console.log(tanks)
+
+        playersEl.innerHTML = ""
+        tanksEl.innerHTML = ""
+
+        for (const player of players) {
+            const el = document.createElement("div")
+            el.innerText = `${player.name} (score: ${player.score})`
+            el.style.color = player.colour
+            playersEl.appendChild(el)
+        }
+
+        for (const tank of tanks) {
+            const el = document.createElement("div")
+            el.innerText = `${tank.x}, ${tank.y} (${tank.angle})`
+            el.style.color = tank.colour
+            tanksEl.appendChild(el)
+        }
+    })
+</script>
+</body>
+</html>
