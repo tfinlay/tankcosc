@@ -5,8 +5,8 @@ export class DegreeAngle {
         return this.degrees * (Math.PI / 180)
     }
 
-    constructor(angle: number) {
-        this.degrees = angle
+    constructor(degrees: number) {
+        this.degrees = degrees
 
         while (this.degrees < 0) {
             this.degrees += 360

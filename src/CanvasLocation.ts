@@ -1,3 +1,4 @@
+import { DegreeAngle } from "./DegreeAngle"
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./global"
 
 export class CanvasLocation {
@@ -20,6 +21,10 @@ export class CanvasLocation {
         return this._yVal
     }
 
+    get isAtEdge(): boolean {
+        return this.x === 0 || this.x === CANVAS_WIDTH || this.y === 0 || this.y === CANVAS_HEIGHT
+    }
+
     constructor(x: number, y: number) {
         this.x = x
         this.y = y
@@ -32,5 +37,15 @@ export class CanvasLocation {
     move(dx: number, dy: number): void {
         this.x += dx
         this.y += dy
+    }
+
+    moveWithAngle(distance: number, angle: DegreeAngle): void {
+        const dx = distance * Math.cos(angle.radians)
+        const dy = distance * Math.sin(angle.radians)
+        this.move(dx, dy)
+    }
+
+    copy(): CanvasLocation {
+        return new CanvasLocation(this.x.valueOf(), this.y.valueOf())
     }
 }

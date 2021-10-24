@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "tankcosc_bots"
+version = "0.1.0"
+description = "Demo bots for tankcosc"
+authors = ["tfinlay <tfinlay_public@protonmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+python-socketio = {extras = ["client"], version = "^5.4.1"}
+requests = "^2.26.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

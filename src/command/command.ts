@@ -1,3 +1,4 @@
+import { Player } from "../Player";
 import { Tank } from "../Tank";
 
 /**
@@ -10,5 +11,5 @@ export abstract class Command {
      * @param tank to execute the command against
      * @returns a JSON-serialisable object to add to the return to the player
      */
-    abstract execute(tank: Tank): any
+    abstract execute(player: Player, tank: Tank): object | void
 }

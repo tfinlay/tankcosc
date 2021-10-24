@@ -1,12 +1,15 @@
+import { BulletProjectile } from "../BulletProjectile"
+import { DegreeAngle } from "../DegreeAngle"
 import { CommandParameterError } from "../error/CommandParameterError"
+import { activeProjectiles } from "../game_state"
 import { Player } from "../Player"
 import { Tank } from "../Tank"
 import { Command } from "./command"
 
 /**
- * Command for a movement in the tank's current direction with the given amount of energy
+ * Command for a rotation with the given number of degrees
  */
-export class MoveCommand extends Command {
+export class ShootCommand extends Command {
     readonly energy: number
 
     constructor(energy: number) {
@@ -23,7 +26,14 @@ export class MoveCommand extends Command {
         const energy = tank.consumeEnergy(this.energy)
 
         if (energy > 0) {
-            tank.move(Math.log10(energy) * 4 + 1)
+            const projectile = new BulletProjectile(
+                player,
+                tank.location.copy(),
+                energy / 10,
+                tank.angle,
+                20
+            )
+            activeProjectiles.add(projectile)
         }
     }
 }

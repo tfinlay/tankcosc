@@ -1,5 +1,6 @@
 import { CanvasLocation } from "./CanvasLocation"
 import { DegreeAngle } from "./DegreeAngle"
+import { CommandParameterError } from "./error/CommandParameterError"
 import { CANVAS_HEIGHT, CANVAS_WIDTH, getRandomIntInclusive } from "./global"
 import { Player } from "./Player"
 
@@ -11,6 +12,8 @@ import { Player } from "./Player"
 export class Tank {
     static readonly DEFAULT_HP = 200
     static readonly DEFAULT_ENERGY = 1000
+    static readonly MAX_ENERGY = 10000000
+    static readonly ENERGY_HEAL_PER_TICK = 10
     static readonly RADIUS = 10
 
     hp: number = Tank.DEFAULT_HP
@@ -34,9 +37,7 @@ export class Tank {
      * @param distance to move in the current angle's direction
      */
     move(distance: number): void {
-        const dx = distance * Math.cos(this.angle.radians)
-        const dy = distance * Math.sin(this.angle.radians)
-        this.location.move(dx, dy)
+        this.location.moveWithAngle(distance, this.angle)
     }
 
     /**
@@ -45,9 +46,27 @@ export class Tank {
      * @returns the actual amount of energy used (since the tank may not have all of the energy requested this may be less that requested)
      */
     consumeEnergy(energy: number): number {
-        const actualEnergy = (this.energy > energy) ? energy : this.energy
+        if (energy <= 0) {
+            throw new CommandParameterError("Energy must be positive.")
+        }
+
+        const actualEnergy = (this.energy >= energy) ? energy : this.energy
         this.energy -= actualEnergy
         return actualEnergy
+    }
+
+    /**
+     * Charges the tank by the default amount (up to the maximum charge)
+     */
+    chargeEnergy(): void {
+        this.energy = Math.min(Tank.MAX_ENERGY, this.energy + Tank.ENERGY_HEAL_PER_TICK)
+    }
+
+    /**
+     * Rotates the tank by the given DegreeAngle.
+     */
+    rotate(angle: DegreeAngle): void {
+        this.angle = this.angle.add(angle)
     }
 
     static random(): Tank {
