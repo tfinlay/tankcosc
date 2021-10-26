@@ -14,7 +14,7 @@ export class Tank {
     static readonly DEFAULT_ENERGY = 1000
     static readonly MAX_ENERGY = 10000000
     static readonly ENERGY_HEAL_PER_TICK = 10
-    static readonly RADIUS = 10
+    static readonly RADIUS = 5
 
     hp: number = Tank.DEFAULT_HP
     get isAlive(): boolean {

@@ -4,6 +4,7 @@
 
 import { io } from "../server/server"
 import { activePlayerConnections, activeProjectiles, players } from "../game_state"
+import { Tank } from "../Tank"
 
 export const buildObserverUpdate = () => {
     const serialisedPlayers = []
@@ -32,7 +33,8 @@ export const buildObserverUpdate = () => {
             colour: player.colour,
             x: tank.location.x,
             y: tank.location.y,
-            angle: tank.angle.degrees
+            angle: tank.angle.degrees,
+            radius: Tank.RADIUS
         })
     }
 

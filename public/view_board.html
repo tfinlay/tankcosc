@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<body>
+    
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        border: none;
+        min-height: 100vh;
+    }
+
+    .content {
+        display: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+    }
+
+    .content #players {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .content #board {
+        border: 1px solid black;
+    }
+</style>
+
+<div class="content">
+    <div id="players"></div>
+    <canvas id="board" width="600" height="600"></canvas>
+</div>
+
+<script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+<script> 
+    const socket = io();
+    const canvasEl = document.getElementById("board")
+    const playersEl = document.getElementById("players")
+
+    if (!canvasEl.getContext) {
+        alert("Your browser doesn't support canvas and so cannot be used to display the board.")
+    }
+    else {
+        (() => {
+            socket.on("loginError", (message) => {
+                alert(`Login Error: ${message}`)
+            })
+            socket.on("requestLogin", () => {
+                console.log("Login Requested")
+                socket.emit("login", "observer", window.location.search.slice(1))
+            })
+            socket.on("update", (players, tanks, projectiles) => {
+                playersEl.innerHTML = ""
+                const ctx = canvasEl.getContext('2d')
+
+                console.log(players)
+                console.log(tanks)
+                console.log(projectiles)
+
+                ctx.clearRect(0, 0, canvasEl.width, canvasEl.height)
+
+                for (const player of players) {
+                    const el = document.createElement("div")
+                    el.innerText = `${player.name} (score: ${player.score})`
+                    el.style.color = player.colour
+                    playersEl.appendChild(el)
+                }
+
+                for (const tank of tanks) {
+                    console.log(`${tank.x}, ${tank.y} (${tank.angle})`)
+
+                    ctx.fillStyle = tank.colour
+
+                    const angleRads = tank.angle * (Math.PI/180)
+
+                    ctx.beginPath()
+                    ctx.arc(tank.x, tank.y, tank.radius, 0, 2*Math.PI)
+
+                    ctx.fill()
+
+                    ctx.fillStyle = "black"
+                    ctx.beginPath()
+                    ctx.arc(
+                        tank.x + (tank.radius * Math.cos(angleRads)),
+                        tank.y + (tank.radius * Math.sin(angleRads)),
+                        2,
+                        0,
+                        2*Math.PI
+                    )
+                    ctx.fill()
+                }
+
+                for (const proj of projectiles) {
+                    ctx.fillStyle = proj.colour
+                    ctx.beginPath()
+                    ctx.arc(proj.x, proj.y, proj.radius, 0, 2*Math.PI)
+                    ctx.fill()
+                }
+            })
+        })()
+    }
+    
+</script>
+</body>
+</html>

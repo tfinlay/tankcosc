@@ -31,7 +31,7 @@ export class ShootCommand extends Command {
                 tank.location.copy(),
                 energy / 10,
                 tank.angle,
-                20
+                3
             )
             activeProjectiles.add(projectile)
         }

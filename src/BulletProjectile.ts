@@ -36,7 +36,8 @@ export class BulletProjectile extends Projectile {
     serialise() {
         return {
             ...this.serialiseBase(),
-            projectileType: "bullet"
+            projectileType: "bullet",
+            radius: this.radius
         }
     }
 }

@@ -23,7 +23,7 @@ export class MoveCommand extends Command {
         const energy = tank.consumeEnergy(this.energy)
 
         if (energy > 0) {
-            tank.move(Math.log10(energy) * 4 + 1)
+            tank.move(Math.log10(Math.log10(energy)) * 4 + 1)
         }
     }
 }

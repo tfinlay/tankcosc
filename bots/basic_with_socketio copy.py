@@ -4,7 +4,7 @@ import functools
 """
 SET UP YOUR BASIC CONFIGURATION
 """
-KEY = "f3a62da5014d4d5086493cb004326651"
+KEY = "77544581bf36430cbc63e1fd84fc72a4"
 
 sio = socketio.Client()
 

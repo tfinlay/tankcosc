@@ -7,6 +7,9 @@ import { updateObservers } from "../tick/update_observers"
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/view.html')
 })
+app.get('/board', (req, res) => {
+    res.sendFile(__dirname + '/view_board.html')
+})
 app.get('/register', (req, res) => {
     res.sendFile(__dirname + '/register.html')
 })
