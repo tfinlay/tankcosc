@@ -5,6 +5,10 @@ export class DegreeAngle {
         return this.degrees * (Math.PI / 180)
     }
 
+    static toDegrees(radians: number): number {
+        return radians * (180 / Math.PI)
+    }
+
     constructor(degrees: number) {
         this.degrees = degrees
 

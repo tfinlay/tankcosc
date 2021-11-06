@@ -3,6 +3,7 @@ import { generatePrivateKey } from "../global"
 import { Player } from "../Player"
 import { app } from "./server"
 import { updateObservers } from "../tick/update_observers"
+import { ColourGenerator } from "../ColourGenerator"
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/view.html')
@@ -10,6 +11,7 @@ app.get('/', (req, res) => {
 app.get('/board', (req, res) => {
     res.sendFile(__dirname + '/view_board.html')
 })
+
 app.get('/register', (req, res) => {
     res.sendFile(__dirname + '/register.html')
 })
@@ -19,7 +21,7 @@ app.post('/register', (req, res) => {
     const name = req.body.name
     if (typeof name === 'string' && name && !playerNames.has(name)) {
         // Register the player
-        const player = new Player(name, "red")
+        const player = new Player(name, ColourGenerator.default.getNextString())
         const key = generatePrivateKey()
 
         players.set(key, player)

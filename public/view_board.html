@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>View</title>
+</head>
 <body>
     
 <style type="text/css">
@@ -26,9 +29,21 @@
     .content #board {
         border: 1px solid black;
     }
+
+    .content #error {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        padding-top: 30px;
+        font-size: 30px;
+        font-family: 'Consolas', monospace;
+    }
 </style>
 
 <div class="content">
+    <span id="error">Starting...</span>
     <div id="players"></div>
     <canvas id="board" width="600" height="600"></canvas>
 </div>
@@ -38,20 +53,26 @@
     const socket = io();
     const canvasEl = document.getElementById("board")
     const playersEl = document.getElementById("players")
+    const errorEl = document.getElementById("error")
 
     if (!canvasEl.getContext) {
-        alert("Your browser doesn't support canvas and so cannot be used to display the board.")
+        errorEl.innerText = "Your browser doesn't support canvas and so cannot be used to display the board."
     }
     else {
         (() => {
             socket.on("loginError", (message) => {
-                alert(`Login Error: ${message}`)
+                errorEl.innerText = `Login Error: ${message}`
             })
             socket.on("requestLogin", () => {
                 console.log("Login Requested")
+                errorEl.innerText = "Logging in..."
                 socket.emit("login", "observer", window.location.search.slice(1))
             })
+            socket.on("disconnect", () => {
+                errorEl.innerText = "Disconnected"
+            })
             socket.on("update", (players, tanks, projectiles) => {
+                errorEl.innerText = ""
                 playersEl.innerHTML = ""
                 const ctx = canvasEl.getContext('2d')
 

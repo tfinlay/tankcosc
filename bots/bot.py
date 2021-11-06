@@ -4,7 +4,7 @@ import functools
 """
 SET UP YOUR BASIC CONFIGURATION
 """
-KEY = "77544581bf36430cbc63e1fd84fc72a4"
+_KEY = None
 
 sio = socketio.Client()
 
@@ -34,7 +34,7 @@ exiting = False
 
 @sio.on('requestLogin')
 def log_in():
-    sio.emit('login', ("player", KEY))
+    sio.emit('login', ("player", _KEY))
 
 @sio.on('login_success')
 def login_success():
@@ -48,9 +48,23 @@ def on_login_error(message):
     print(f"Login Error: {message}")
     exiting = True    
 
+@sio.on('disconnect')
+def on_disconnect():
+    global exiting
+    print(f"Disconnected. Exiting...")
+    exiting = True
+
 @controller.transactional
 def move(energy: int):
     sio.emit('move', energy)
+
+@controller.transactional
+def scan():
+    sio.emit('scan')
+
+@controller.transactional
+def poll():
+    sio.emit('poll')
 
 @controller.transactional
 def shoot(energy: int):
@@ -66,33 +80,38 @@ def wait():
 
 HEALTH = 200
 ENERGY = 200
-SCAN_RESULT = None
+SCAN_RESULT = []
 
 @sio.on('response')
 def on_response(data):
-    global HEALTH, ENERGY
+    global HEALTH, ENERGY, SCAN_RESULT
+
+    error_maybe = data.get("error")
+    if error_maybe is not None:
+        print(f"Received error: {error_maybe}")
+
     HEALTH = data["hp"]
     ENERGY = data["energy"]
+    SCAN_RESULT = data.get("scan", [])
+
     controller.log_reply()
 
-# Connect
-sio.connect('ws://127.0.0.1:3000/')
+def start(main_fn, key: str = None):
+    global _KEY
+    _KEY = key
 
-# Wait until login succeeds
-while not logged_in and not exiting:
-    sio.sleep(0.001)
+    if key is None:
+        raise Exception("A key is required to start.")
 
-# Begin bot commands
-while not exiting:
-    print(f"Health\t{HEALTH}\tEnergy\t{ENERGY}")
+    # Connect
+    sio.connect('ws://127.0.0.1:3000/')
 
-    if ENERGY >= 400:
-        move(400)
-        rotate(90)
-        while ENERGY <= 200:
-            wait()
-        shoot(200)
-    else:
-        wait()
+    # Wait until login succeeds
+    while not logged_in and not exiting:
+        sio.sleep(0.001)
 
-sio.disconnect()
+    try:
+        while not exiting:
+            main_fn()
+    finally:
+        sio.disconnect()

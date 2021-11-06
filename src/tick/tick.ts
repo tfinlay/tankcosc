@@ -11,9 +11,23 @@ const updateProjectiles = () => {
     }
 }
 
-const chargeTanks = () => {
+const chargeAndCheckForCollisions = () => {
     for (const conn of activePlayerConnections) {
-        conn.tank.chargeEnergy()
+        const tank = conn.tank
+
+        // Check for collisions with projectiles
+        for (const projectile of activeProjectiles) {
+            if (projectile.owner !== conn.player && projectile.collidingWith(tank)) {
+                activeProjectiles.delete(projectile)
+                conn.handleTankDamage(projectile.calculateDamage(tank))
+            }
+        }
+
+        // Charge tank (if it wasn't just destroyed)
+        if (tank.isAlive) {
+            tank.chargeEnergy()
+        }
+
     }
 }
 
@@ -32,10 +46,8 @@ export const runGameTick = () => {
     // Move shots
     updateProjectiles()
 
-    // TODO: Check for collisions
-
-    // Charge tanks
-    chargeTanks()
+    // Check for collisions and charge tanks
+    chargeAndCheckForCollisions()
 
     // Clear the buffer.
     connectionUpdateBuffer.splice(0, connectionUpdateBuffer.length);

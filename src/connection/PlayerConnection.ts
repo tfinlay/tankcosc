@@ -1,8 +1,11 @@
 import { Socket } from "socket.io";
 import { Command } from "../command/command";
 import { MoveCommand } from "../command/MoveCommand";
+import { PollCommand } from "../command/PollCommand";
 import { RotateCommand } from "../command/RotateCommand";
+import { ScanCommand } from "../command/ScanCommand";
 import { ShootCommand } from "../command/ShootCommand";
+import { CommandParameterError } from "../error/CommandParameterError";
 import { Player } from "../Player";
 import { Tank } from "../Tank";
 import { Connection } from "./connection";
@@ -25,6 +28,8 @@ export class PlayerConnection extends Connection {
         socket.on("move", this.onMoveCommand.bind(this))
         socket.on("rotate", this.onRotateCommand.bind(this))
         socket.on("shoot", this.onShootCommand.bind(this))
+        socket.on("scan", this.onScanCommand.bind(this))
+        socket.on("poll", this.onPollCommand.bind(this))
     }
 
     addCommandEventListener(callback: (command: Command) => void) {
@@ -77,6 +82,36 @@ export class PlayerConnection extends Connection {
     }
 
     /**
+     * Handles receiving the 'scan' command.
+     */
+    private onScanCommand(): void {
+        let command: ScanCommand
+        try {
+            command = new ScanCommand()
+        }
+        catch (ex) {
+            return
+        }
+
+        this.queueCommand(command)
+    }
+
+    /**
+     * Handles receiving the 'poll' command.
+     */
+     private onPollCommand(): void {
+        let command: PollCommand
+        try {
+            command = new PollCommand()
+        }
+        catch (ex) {
+            return
+        }
+
+        this.queueCommand(command)
+    }
+
+    /**
      * Sets the queued command to be executed in the next tick (if there isn't one already).
      * 
      * @returns true if the command is queued successfully, false if a command is already queued.
@@ -90,13 +125,17 @@ export class PlayerConnection extends Connection {
         return false
     }
 
-    private sendResponse(extraResponseFields: object | void): void {
-        const data = {
+    private sendResponse(extraResponseFields: object | void, errorMessage?: string): void {
+        const data: any = {
             ...(extraResponseFields ?? {}),
             hp: this.tank.hp,
-            energy: this.tank.energy
+            energy: this.tank.energy,
         }
-        //console.table(data)
+
+        if (errorMessage !== undefined) {
+            data.error = errorMessage
+        }
+
         this.socket.emit('response', data)
     }
 
@@ -104,9 +143,35 @@ export class PlayerConnection extends Connection {
      * Called every tick. Processes the next command (if any) and pushes an update to the player.
      */
     processCommandAndNotify(): void {
-        const extraResponseFields = this.nextCommand?.execute(this.player, this.tank)
+        let errorMessage: string | null = null
+        let extraResponseFields: void | object
+        try {
+            extraResponseFields = this.nextCommand?.execute(this.player, this.tank)
+        }
+        catch (ex) {
+            console.warn(`An error occurred when processing a command:`)
+            console.error(ex)
+
+            if (ex instanceof CommandParameterError) {
+                errorMessage = ex.message
+            }
+            else {
+                errorMessage = "An error occurred while processing your last command."
+            }
+        }
         this.nextCommand = null
-        this.sendResponse(extraResponseFields)
+        this.sendResponse(extraResponseFields, errorMessage)
+    }
+
+    /**
+     * Handles the tank taking damage. Including the case where it is destroyed.
+     * @param damage Hit points to subtract.
+     */
+    handleTankDamage(damage: number): void {
+        if (!this.tank.takeDamage(damage)) {
+            // Tank is dead
+            this.socket.disconnect()
+        }
     }
 
     dispose(): void {

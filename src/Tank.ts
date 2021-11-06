@@ -11,7 +11,7 @@ import { Player } from "./Player"
  */
 export class Tank {
     static readonly DEFAULT_HP = 200
-    static readonly DEFAULT_ENERGY = 1000
+    static readonly DEFAULT_ENERGY = 10000
     static readonly MAX_ENERGY = 10000000
     static readonly ENERGY_HEAL_PER_TICK = 10
     static readonly RADIUS = 5
@@ -53,6 +53,16 @@ export class Tank {
         const actualEnergy = (this.energy >= energy) ? energy : this.energy
         this.energy -= actualEnergy
         return actualEnergy
+    }
+
+    /**
+     * Subtract damage from hitpoints and return true if the tank is still alive.
+     * @param damage Hit points to subtract.
+     * @returns true if the tank still has hp > 0
+     */
+    takeDamage(damage: number): boolean {
+        this.hp = Math.max(0, this.hp - damage)
+        return this.hp !== 0
     }
 
     /**
