@@ -114,4 +114,5 @@ def start(main_fn, key: str = None):
         while not exiting:
             main_fn()
     finally:
-        sio.disconnect()
+        if sio.connected:
+            sio.disconnect()

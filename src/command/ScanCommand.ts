@@ -22,24 +22,29 @@ export class ScanCommand extends Command {
     execute(player: Player, tank: Tank): ScanCommandResponse {
         const results: ScanResponseEnemy[] = []
 
-        for (const player of activePlayerConnections) {
-            const dx = tank.location.x - player.tank.location.x
-            const dy = tank.location.y - player.tank.location.y
-
-            let angle = 0
-            if (dx != 0) {  // anti-divide by zero
-                angle = DegreeAngle.toDegrees(Math.atan(
-                    dy / dx
-                ))
+        for (const playerConn of activePlayerConnections) {
+            if (playerConn.player === player) {
+                continue;
             }
 
-            if (dx > 0) {
-                angle += 180
-            }
-                
+            const dx = playerConn.tank.location.x - tank.location.x
+            const dy = playerConn.tank.location.y - tank.location.y
+
+            let angle = DegreeAngle.toDegrees(Math.atan2(
+                dy, dx
+            ))
+
+            const distance = Math.sqrt(dx*dx + dy*dy)
+
+            const rotation = new DegreeAngle(angle - tank.angle.degrees).degrees
+            const rotationFuzziness = ((distance*distance) * (1/10000) * (Math.random() - 0.5))  // Noise increases with the square of the distance
+            const rotationReading = ((-0.1 < rotation && rotation < 0.1 ) ? 0 : rotation) + rotationFuzziness
+
+            console.log(rotationFuzziness)
+
             results.push([
-                Math.sqrt(dx*dx + dy*dy),
-                angle
+                distance,  // Distance
+                rotationReading // Rotation
             ])
         }
 

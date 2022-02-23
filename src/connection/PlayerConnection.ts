@@ -166,12 +166,15 @@ export class PlayerConnection extends Connection {
     /**
      * Handles the tank taking damage. Including the case where it is destroyed.
      * @param damage Hit points to subtract.
+     * @returns true if the tank is dead, false if the tank still lives
      */
-    handleTankDamage(damage: number): void {
+    handleTankDamage(damage: number): boolean {
         if (!this.tank.takeDamage(damage)) {
             // Tank is dead
             this.socket.disconnect()
+            return true
         }
+        return false
     }
 
     dispose(): void {

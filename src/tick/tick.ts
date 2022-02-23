@@ -19,7 +19,10 @@ const chargeAndCheckForCollisions = () => {
         for (const projectile of activeProjectiles) {
             if (projectile.owner !== conn.player && projectile.collidingWith(tank)) {
                 activeProjectiles.delete(projectile)
-                conn.handleTankDamage(projectile.calculateDamage(tank))
+                const tankIsDead = conn.handleTankDamage(projectile.calculateDamage(tank))
+                if (tankIsDead) {
+                    projectile.owner.score += 100
+                }
             }
         }
 
@@ -56,7 +59,7 @@ export const runGameTick = () => {
     
 
     const endTime = performance.now()
-    if (endTime - startTime > 20) {
+    if (endTime - startTime > 33) {
         // Took more than 20ms
         console.warn(`Tick processing time took more than ${endTime-startTime}ms.`)
     }

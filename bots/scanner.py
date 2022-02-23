@@ -7,7 +7,7 @@ def main():
 
     # Begin bot commands
     print(f"Health\t{hp}\tEnergy\t{energy}")
-    if energy > 1000:
+    if energy > 300:
         scan()
         
         print(bot.SCAN_RESULT)
@@ -16,7 +16,7 @@ def main():
 
         target = bot.SCAN_RESULT[0]
         rotate(target[1])
-        shoot(1000)
+        shoot(100)
 
 from test_util import get_key
 bot.start(main, get_key("scanner"))
