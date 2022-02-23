@@ -40,8 +40,6 @@ export class ScanCommand extends Command {
             const rotationFuzziness = ((distance*distance) * (1/10000) * (Math.random() - 0.5))  // Noise increases with the square of the distance
             const rotationReading = ((-0.1 < rotation && rotation < 0.1 ) ? 0 : rotation) + rotationFuzziness
 
-            console.log(rotationFuzziness)
-
             results.push([
                 distance,  // Distance
                 rotationReading // Rotation
