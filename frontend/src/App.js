@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Routes, Route, Link as RouterLink} from 'react-
 import { Home } from './routes/Home'
 import {NavBar} from './component/NavBar'
 import {Register} from './routes/Register'
+import {Board} from './routes/Board'
 import Paper from '@mui/material/Paper'
 
 const App = () => {
@@ -13,7 +14,7 @@ const App = () => {
 
                 <Routes>
                     <Route path="/" element={<Home/>} />
-                    <Route path="board" element={<p>Board</p>} />
+                    <Route path="board" element={<Board/>} />
                     <Route path="register" element={<Register/>} />
                 </Routes>
             </Router>

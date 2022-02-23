@@ -31,6 +31,16 @@ export const NavBar = () => {
                             >
                                 Home
                             </Button>
+
+                            <Button
+                                size="large"
+                                component={Link}
+                                to="/board"
+                                color="inherit"
+                                sx={{ my: 2 }}
+                            >
+                                Board
+                            </Button>
                         </Box>
 
                         <Box sx={{ flexGrow: 0 }}>
