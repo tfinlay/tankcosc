@@ -8,9 +8,13 @@ import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 import LinearProgress from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography'
-import CircleIcon from '@mui/icons-material/Circle';
+import CircleIcon from '@mui/icons-material/Circle'
+import Divider from '@mui/material/Divider';
+import AttractionsIcon from '@mui/icons-material/Attractions';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material'
 import {LoadingNotYetAttempted, LoadingPending, LoadingDone, LoadingError} from '../LoadingStatus'
 import { GAME_SERVER_PATH } from '../config'
+import {Link} from 'react-router-dom'
 
 export const Register = () => {
     const [username, setUsername] = useState("")
@@ -136,6 +140,26 @@ const PostRegistrationScreen = ({ userData }) => {
                         <Typography component="div">Your secret key:</Typography>
                         <Typography sx={{fontFamily: 'monospace'}}>{userData.key}</Typography>
                     </Box>
+
+                    <Divider />
+
+                    <List
+                        sx={{
+                            width: '100%',
+                            bgcolor: 'background.paper'
+                        }}
+                    >
+                        <ListItem disablePadding>
+                            <ListItemButton to={`/playground/${userData.key}`} component={Link}>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <AttractionsIcon/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary="Open Playground" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
                 </CardContent>
             </Card>
         </Box>

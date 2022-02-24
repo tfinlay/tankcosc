@@ -4,6 +4,8 @@ import { Home } from './routes/Home'
 import {NavBar} from './component/NavBar'
 import {Register} from './routes/Register'
 import {Board} from './routes/Board'
+import {Playground} from './routes/Playground/Playground'
+import {NotFound} from './routes/NotFound'
 import Paper from '@mui/material/Paper'
 
 const App = () => {
@@ -16,6 +18,8 @@ const App = () => {
                     <Route path="/" element={<Home/>} />
                     <Route path="board" element={<Board/>} />
                     <Route path="register" element={<Register/>} />
+                    <Route path="playground/:key" element={<Playground/>} />
+                    <Route path="*" element={<NotFound/>} />
                 </Routes>
             </Router>
         </Paper>

@@ -1467,6 +1467,21 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@monaco-editor/loader@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@monaco-editor/loader/-/loader-1.2.0.tgz#373fad69973384624e3d9b60eefd786461a76acd"
+  integrity sha512-cJVCG/T/KxXgzYnjKqyAgsKDbH9mGLjcXxN6AmwumBwa2rVFkwvGcUj1RJtD0ko4XqLqJxwqsN/Z/KURB5f1OQ==
+  dependencies:
+    state-local "^1.0.6"
+
+"@monaco-editor/react@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@monaco-editor/react/-/react-4.3.1.tgz#d65bcbf174c39b6d4e7fec43d0cddda82b70a12a"
+  integrity sha512-f+0BK1PP/W5I50hHHmwf11+Ea92E5H1VZXs+wvKplWUWOfyMa1VVwqkJrXjRvbcqHL+XdIGYWhWNdi4McEvnZg==
+  dependencies:
+    "@monaco-editor/loader" "^1.2.0"
+    prop-types "^15.7.2"
+
 "@mui/base@5.0.0-alpha.69":
   version "5.0.0-alpha.69"
   resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.69.tgz#8511198d760de0795870f5ec63e53db73ba801ec"
@@ -3534,6 +3549,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-fns@^2.28.0:
+  version "2.28.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.28.0.tgz#9570d656f5fc13143e50c975a3b6bbeb46cd08b2"
+  integrity sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==
 
 debug@2.6.9, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"
@@ -5869,7 +5889,7 @@ loader-runner@^4.2.0:
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-4.2.0.tgz#d7022380d66d14c5fb1d496b89864ebcfd478384"
   integrity sha512-92+huvxMvYlMzMt0iIOukcwYBFpkYJdpl2xsZ7LrlayO7E8SOv+JJUEK17B/dJIHAOLMfh2dZZ/Y18WgmGtYNw==
 
-loader-utils@^1.4.0:
+loader-utils@^1.1.0, loader-utils@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.4.0.tgz#c579b5e34cb34b1a74edc6c1fb36bfa371d5a613"
   integrity sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==
@@ -6118,6 +6138,16 @@ mkdirp@^0.5.5, mkdirp@~0.5.1:
   integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
+
+mobx-react-lite@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-3.3.0.tgz#7174e807201943beff6f9d3701492314c9fc0db3"
+  integrity sha512-U/kMSFtV/bNVgY01FuiGWpRkaQVHozBq5CEBZltFvPt4FcV111hEWkgwqVg9GPPZSEuEdV438PEz8mk8mKpYlA==
+
+mobx@^6.4.1:
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.4.1.tgz#c1d0eeb37ceb31bb2020a85f6bf856782d47fe60"
+  integrity sha512-NFXx0uMbGBgsa0uxhH099L8cMuoRQWh01q6Sf0ZX/3hFU7svJ7yfTD+1LnLMa5wzY/b7gImAeMsR1p0wordDnA==
 
 ms@2.0.0:
   version "2.0.0"
@@ -7247,6 +7277,13 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
+react-app-rewired@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-app-rewired/-/react-app-rewired-2.2.1.tgz#84901ee1e3f26add0377ebec0b41bcdfce9fc211"
+  integrity sha512-uFQWTErXeLDrMzOJHKp0h8P1z0LV9HzPGsJ6adOtGlA/B9WfT6Shh4j2tLTTGlXOfiVx6w6iWpp7SOC5pvk+gA==
+  dependencies:
+    semver "^5.6.0"
+
 react-dev-utils@^12.0.0:
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-12.0.0.tgz#4eab12cdb95692a077616770b5988f0adf806526"
@@ -7728,6 +7765,11 @@ semver@7.0.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.0.0.tgz#5f3ca35761e47e05b206c6daff2cf814f0316b8e"
   integrity sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
 
+semver@^5.6.0:
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
+  integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==
+
 semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
@@ -7972,6 +8014,11 @@ stackframe@^1.1.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.2.1.tgz#1033a3473ee67f08e2f2fc8eba6aef4f845124e1"
   integrity sha512-h88QkzREN/hy8eRdyNhhsO7RSJ5oyTqxxmmn0dzBIMUclZsjpfmrsg81vp8mjjAs2vAZ72nyWxRUwSwmh0e4xg==
+
+state-local@^1.0.6:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/state-local/-/state-local-1.0.7.tgz#da50211d07f05748d53009bee46307a37db386d5"
+  integrity sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==
 
 "statuses@>= 1.4.0 < 2", "statuses@>= 1.5.0 < 2", statuses@~1.5.0:
   version "1.5.0"
@@ -8969,6 +9016,13 @@ workbox-window@6.4.2:
   dependencies:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.4.2"
+
+worker-plugin@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/worker-plugin/-/worker-plugin-5.0.1.tgz#bd76d66216a637a893c6a2f6a530f6bbb2bb8016"
+  integrity sha512-Pn7+19jIiANcGuTSGdy+vrzyF+SGH03A5wV8iu4jRTMAOfAC9bNeiHo4+l5tPS7F0uvICMBv+h8UCvL7lunxcA==
+  dependencies:
+    loader-utils "^1.1.0"
 
 wrap-ansi@^7.0.0:
   version "7.0.0"

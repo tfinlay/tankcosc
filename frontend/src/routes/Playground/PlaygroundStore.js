@@ -1,0 +1,138 @@
+import { makeObservable, observable, action, computed, runInAction } from "mobx"
+import format from "date-fns/format"
+import { checkboxClasses } from "@mui/material"
+
+const DEFAULT_CODE_VALUE = `\
+// Welcome to TankCosc!
+// You can write JavaScript source code for your bot in this box then hit "Run" to see what it does!
+// See below for a skeleton implementation for a bot that simply waits, scans, rotates, and shoots.
+
+function main() {
+    print(\`Health: \${hp}\\tEnergy: \${energy}\`);
+    if (energy > 300) {
+        scan();  // Uses 200 energy
+
+        print(lastScanResult);
+        if (lastScanResult.length > 0) {
+            // We picked something up during the scan!
+            // Rotate to the first thing we detected and shoot at it
+            let target = lastScanResult[0];
+            rotate(target.relativeAngle);  // Rotate to point at the enemy
+            shoot(100);                    // Shoot with 100 energy
+        }
+    }
+}
+
+// Run the 'main' function forever
+while (true) {
+    main();
+}
+`
+
+export class PlaygroundStore {
+    displayLogs = false
+    logs = observable.array()
+    
+    code = DEFAULT_CODE_VALUE
+
+    key = null
+    
+    worker = null
+
+    constructor(key) {
+        makeObservable(this, {
+            displayLogs: observable,
+            logs: observable,
+            code: observable,
+            worker: observable,
+            onCodeChange: action,
+            _logEvent: action,
+            _destroyWorker: action,
+            toggleLogs: action,
+            start: action,
+            stop: action,
+            isRunning: computed
+        })
+        this.key = key
+    }
+
+    get isRunning() {
+        return this.worker !== null
+    }
+
+    onCodeChange(value) {
+        this.code = value
+    }
+
+    _logEvent(message) {
+        this.logs.push({
+            date: format(new Date(), 'yyyy-MM-dd hh:mm:ss'),
+            message: message
+        })
+    }
+
+    _destroyWorker() {
+        this.worker.terminate()
+        this.worker = null
+    }
+
+    async start() {
+        if (this.isRunning) {
+            return
+        }
+        this.logs.clear()
+        this.displayLogs = true
+
+        this._logEvent("Began Execution")
+        this.worker = new Worker(new URL('./executor_worker.js', import.meta.url))
+
+        const handleWorkerError = (ex) => {
+            console.log(ex)
+            this._logEvent(`ERROR: ${ex.message} (lineno: ${ex.lineno} - note that this is likely meaningless to you sorry)`)
+            this._destroyWorker()
+        }
+
+        //this.worker.onerror = handleWorkerError
+        this.worker.onmessage = (event) => {
+            console.log(event)
+            const message = event.data
+
+            if (message.status === "done") {
+                this._destroyWorker()
+            }
+            else if (message.status === "error") {
+                checkboxClasses.log("Got error")
+                handleWorkerError(message.error)
+            }
+        }
+
+        this.worker.postMessage({
+            command: "start",
+            code: this.code
+        })
+    }
+
+    stop() {
+        if (!this.isRunning) {
+            return
+        }
+
+        this._logEvent(`Manually terminating execution...`)
+
+        this.worker.postMessage({
+            command: "stop"
+        })
+
+        setTimeout(() => {
+            // Just in case it hangs
+            if (this.worker !== null) {
+                this._destroyWorker()  
+            }
+            this._logEvent(`Execution manually terminated.`)
+        }, 500)
+    }
+
+    toggleLogs() {
+        this.displayLogs = !this.displayLogs
+    }
+}
