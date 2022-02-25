@@ -84,16 +84,14 @@ export class PlaygroundStore {
         this.displayLogs = true
 
         this._logEvent("Began Execution")
-        this.worker = new Worker(new URL('./executor_worker.js', import.meta.url))
+        this.worker = new Worker('/static/js/playground_executor_worker.js')
 
-        const handleWorkerError = (ex) => {
+        this.worker.addEventListener('error', (ex) => {
             console.log(ex)
-            this._logEvent(`ERROR: ${ex.message} (lineno: ${ex.lineno} - note that this is likely meaningless to you sorry)`)
+            this._logEvent(`[INTERNAL ERROR] You may want to refresh the page and try again. Error details: ${ex.message} (lineno: ${ex.lineno})`)
             this._destroyWorker()
-        }
-
-        //this.worker.onerror = handleWorkerError
-        this.worker.onmessage = (event) => {
+        })
+        this.worker.addEventListener('message', (event) => {
             console.log(event)
             const message = event.data
 
@@ -101,14 +99,15 @@ export class PlaygroundStore {
                 this._destroyWorker()
             }
             else if (message.status === "error") {
-                checkboxClasses.log("Got error")
-                handleWorkerError(message.error)
+                this._logEvent(`[ERROR] Details: ${message.error.message} (lineno: ${message.error.lineno})`)
+                this._destroyWorker()
             }
-        }
+        })
 
         this.worker.postMessage({
             command: "start",
-            code: this.code
+            code: this.code,
+            key: this.key
         })
     }
 

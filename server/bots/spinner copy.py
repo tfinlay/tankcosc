@@ -19,4 +19,4 @@ def main():
             
 
 from test_util import get_key
-bot.start(main, '4d73b6d293584030a04b5851050fecac')
+bot.start(main, 'e4520dd2526242aa9ca7ab847712567b')
