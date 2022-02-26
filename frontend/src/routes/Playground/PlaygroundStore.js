@@ -50,7 +50,9 @@ while (true) {
 `*/
 
 export class PlaygroundStore {
-    displayLogs = false
+    displaySidePanel = false
+    sidePanelTab = 'docs'
+
     logs = observable.array()
     
     code = DEFAULT_CODE_VALUE
@@ -61,17 +63,19 @@ export class PlaygroundStore {
 
     constructor(key) {
         makeObservable(this, {
-            displayLogs: observable,
+            displaySidePanel: observable,
+            sidePanelTab: observable,
             logs: observable,
             code: observable,
             worker: observable,
             onCodeChange: action,
             _logEvent: action,
             _destroyWorker: action,
-            toggleLogs: action,
+            toggleSidePanel: action,
             start: action,
             stop: action,
-            isRunning: computed
+            isRunning: computed,
+            setSidePanelTab: action
         })
         this.key = key
     }
@@ -101,7 +105,8 @@ export class PlaygroundStore {
             return
         }
         this.logs.clear()
-        this.displayLogs = true
+        this.displaySidePanel = true
+        this.sidePanelTab = 'logs'
 
         this._logEvent("Began Execution")
         this.worker = new Worker('/static/js/playground_executor_worker.js')
@@ -157,7 +162,11 @@ export class PlaygroundStore {
         }, 500)
     }
 
-    toggleLogs() {
-        this.displayLogs = !this.displayLogs
+    toggleSidePanel() {
+        this.displaySidePanel = !this.displaySidePanel
+    }
+
+    setSidePanelTab(newValue) {
+        this.sidePanelTab = newValue
     }
 }

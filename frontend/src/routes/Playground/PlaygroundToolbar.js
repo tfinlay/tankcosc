@@ -46,12 +46,12 @@ export const PlaygroundToolbar = observer(() => {
                     </Box>
 
                     <Box sx={{flexGrow: 0}}>
-                        <Tooltip title={`${store.displayLogs ? 'Hide' : 'Show'} logs panel`}>
+                        <Tooltip title={`${store.displaySidePanel ? 'Hide' : 'Show'} side panel`}>
                             <IconButton
                                 color="inherit"
                                 size="large"
-                                aria-label={`${store.displayLogs ? 'hide' : 'show'} logs panel`}
-                                onClick={() => store.toggleLogs()}
+                                aria-label={`${store.displaySidePanel ? 'hide' : 'show'} side panel`}
+                                onClick={() => store.toggleSidePanel()}
                             >
                                 <ListAltIcon />
                             </IconButton>

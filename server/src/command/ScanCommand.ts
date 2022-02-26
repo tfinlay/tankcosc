@@ -3,6 +3,7 @@ import { activePlayerConnections } from "../game_state"
 import { Player } from "../Player"
 import { Tank } from "../Tank"
 import { Command } from "./command"
+import sortBy from "lodash/sortBy"
 
 type ScanResponseEnemy = {distance: number, relativeAngle: number}
 
@@ -47,7 +48,7 @@ export class ScanCommand extends Command {
         }
 
         return {
-            scan: results
+            scan: sortBy(results, "distance")
         }
     }
 }
