@@ -1,34 +1,34 @@
 import { makeObservable, observable, action, computed, runInAction } from "mobx"
 import format from "date-fns/format"
 
-/*const DEFAULT_CODE_VALUE = `\
+const DEFAULT_CODE_VALUE = `\
 // Welcome to TankCosc!
 // You can write JavaScript source code for your bot in this box then hit "Run" to see what it does!
 // See below for a skeleton implementation for a bot that simply waits, scans, rotates, and shoots.
 
-function main() {
+async function main() {
     print(\`Health: \${hp}\\tEnergy: \${energy}\`);
     if (energy > 300) {
-        scan();  // Uses 200 energy
+        await scan();  // Uses 200 energy
 
         print(lastScanResult);
         if (lastScanResult.length > 0) {
             // We picked something up during the scan!
             // Rotate to the first thing we detected and shoot at it
             let target = lastScanResult[0];
-            rotate(target.relativeAngle);  // Rotate to point at the enemy
-            shoot(100);                    // Shoot with 100 energy
+            await rotate(target.relativeAngle);  // Rotate to point at the enemy
+            await shoot(100);                    // Shoot with 100 energy
         }
     }
 }
 
 // Run the 'main' function forever
 while (true) {
-    main();
+    await main();
 }
-`*/
+`
 
-const DEFAULT_CODE_VALUE = `\
+/*const DEFAULT_CODE_VALUE = `\
 // Welcome to TankCosc!
 // You can write JavaScript source code for your bot in this box then hit "Run" to see what it does!
 // See below for a skeleton implementation for a bot that simply waits, scans, rotates, and shoots.
@@ -47,7 +47,7 @@ async function main() {
 while (true) {
     await main();
 }
-`
+`*/
 
 export class PlaygroundStore {
     displayLogs = false

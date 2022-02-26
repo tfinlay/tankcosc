@@ -159,7 +159,7 @@ class ExecutorWorker {
     _setupSocket() {
         this.socket = io(GAME_SERVER_PATH)
         this.socket.on("disconnect", () => {
-            this.socket = null
+            this.forceStop();
         })
         this.socket.on("requestLogin", () => {
             this.socket.emit("login", "player", this.key)

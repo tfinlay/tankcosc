@@ -4,7 +4,7 @@ import { Player } from "../Player"
 import { Tank } from "../Tank"
 import { Command } from "./command"
 
-type ScanResponseEnemy = [distance: number, angle: number]
+type ScanResponseEnemy = {distance: number, relativeAngle: number}
 
 interface ScanCommandResponse {
     scan: ScanResponseEnemy[]
@@ -40,10 +40,10 @@ export class ScanCommand extends Command {
             const rotationFuzziness = ((distance*distance) * (1/10000) * (Math.random() - 0.5))  // Noise increases with the square of the distance
             const rotationReading = ((-0.1 < rotation && rotation < 0.1 ) ? 0 : rotation) + rotationFuzziness
 
-            results.push([
-                distance,  // Distance
-                rotationReading // Rotation
-            ])
+            results.push({
+                distance: distance,  // Distance
+                relativeAngle: rotationReading // Rotation
+            })
         }
 
         return {
