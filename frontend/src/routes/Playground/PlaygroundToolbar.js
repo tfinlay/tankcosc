@@ -14,7 +14,7 @@ export const PlaygroundToolbar = observer(() => {
     }, [store.key])
 
     return (
-        <AppBar position="relative" color="secondary" elevation={0}>
+        <AppBar position="relative" color="secondary" elevation={0} height={68.5}>
             <Container maxWidth="x1">
                 <Toolbar disableGutters>
                     <Box sx={{flexGrow: 1, display: 'flex'}}>

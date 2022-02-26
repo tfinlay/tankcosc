@@ -9,12 +9,23 @@ let hp = -1, energy = -1, lastScanResult = null;
 
 let ___INTERNAL_blockingAwaitingResponse = false;
 
+function callbackOnceDone(callback) {
+    setTimeout(() => {
+        if (___INTERNAL_blockingAwaitingResponse) {
+            callbackOnceDone(callback);
+        }
+        else {
+            callback();
+        }
+    }, 10)
+}
+
 function ___INTERNAL_blockUntilResponse() {
-    while (___INTERNAL_blockingAwaitingResponse) {
-        // Yay for busy-looping
-        continue;
-    }
-    return;
+    ___INTERNAL_blockingAwaitingResponse = true;
+
+    return new Promise((resolve, reject) => {
+        callbackOnceDone(resolve);
+    });
 }
 
 function move(energy) {
@@ -22,7 +33,7 @@ function move(energy) {
         command: "move",
         args: [energy]
     });
-    ___INTERNAL_blockUntilResponse();
+    return ___INTERNAL_blockUntilResponse();
 }
 
 function scan(energy) {
@@ -30,7 +41,7 @@ function scan(energy) {
         command: "scan",
         args: []
     });
-    ___INTERNAL_blockUntilResponse();
+    return ___INTERNAL_blockUntilResponse();
 }
 
 function poll(energy) {
@@ -38,7 +49,7 @@ function poll(energy) {
         command: "poll",
         args: []
     });
-    ___INTERNAL_blockUntilResponse();
+    return ___INTERNAL_blockUntilResponse();
 }
 
 function shoot(energy) {
@@ -46,7 +57,7 @@ function shoot(energy) {
         command: "shoot",
         args: [energy]
     });
-    ___INTERNAL_blockUntilResponse();
+    return ___INTERNAL_blockUntilResponse();
 }
 
 function rotate(degrees) {
@@ -54,32 +65,35 @@ function rotate(degrees) {
         command: "rotate",
         args: [degrees]
     });
-    ___INTERNAL_blockUntilResponse();
+    return ___INTERNAL_blockUntilResponse();
 }
 
 // Non-transactional
 
-function print(message) {
+function print(val) {
     postMessage({
         command: "print",
-        message: message
-    })
+        args: [val]
+    });
+    return new Promise((res, rej) => res())
 }
 
 onmessage = (evt) => {
     const message = evt.data;
     console.log("SubWorker: Hello!");
 
-    if (message.hasOwnProperty('error')) {
-        print(\`[ERROR]: \${message.error}\`)
+    if (message.hasOwnProperty('error') && message.error !== null) {
+        print(\`[ERROR]: \${message.error}\`);
+        return;
     }
 
-    hp = message.hp
-    energy = message.energy
-    lastScanResult = message.scan
+    hp = message.hp;
+    energy = message.energy;
+    lastScanResult = message.scan;
+    ___INTERNAL_blockingAwaitingResponse = false;
 }
 `
-const WORKER_SCRIPT_HEADER_LENGTH = WORKER_SCRIPT_HEADER.length + 4  // see _startWorker() below
+const WORKER_SCRIPT_HEADER_LENGTH = WORKER_SCRIPT_HEADER.split(/\n/g).length + 4  // see _startWorker() below
 
 class ExecutorWorker {
     worker = null
@@ -102,6 +116,9 @@ class ExecutorWorker {
                 message: args[0]
             })
         }
+        else if (command === "finished") {
+            this.forceStop()
+        }
         else {
             // Socket.IO commands!
             this.socket.emit(command, ...args)
@@ -114,19 +131,27 @@ class ExecutorWorker {
         /*
             BEGIN USER CODE
         */`
-        const completeCode = header + "\n" + this.code
+        const completeCode = header + "\n" + this.code + `
+        
+        postMessage({
+            command: "finished",
+            args: []
+        });`
 
         const blob = new Blob([completeCode], {type: "application/javascript"})
-        this.worker = new Worker(URL.createObjectURL(blob))
+        this.worker = new Worker(URL.createObjectURL(blob), {type: "module"})
         this.worker.addEventListener("error", (ex) => {
             postMessage({
                 status: "error",
-                error: ex
+                errorMessage: ex.message,
+                adjustedLineNumber: (ex.lineno ?? 0) - WORKER_SCRIPT_HEADER_LENGTH
             })
             this.forceStop()
+            console.log(ex)
         })
         this.worker.addEventListener("message", (evt) => {
-            const message = evt.message
+            const message = evt.data
+            console.log(`ExecutorWorker: Received command: ${message.command} ${message.args}`)
             this._handleWorkerCommand(message.command, message.args)
         })
     }
@@ -137,7 +162,7 @@ class ExecutorWorker {
             this.socket = null
         })
         this.socket.on("requestLogin", () => {
-            this.socket.emit("login", {player: this.key})
+            this.socket.emit("login", "player", this.key)
         })
         this.socket.on("loginError", (message) => {
             this._log(`Login error: ${message}`)
@@ -150,10 +175,12 @@ class ExecutorWorker {
         this.socket.on("response", (data) => {
             if (this.isFirstRun) {
                 // Time to start the worker!
+                this.isFirstRun = false
                 this._startWorker(data)
             }
             else {
                 // Notify the worker
+                console.log("Sending response to worker...")
                 this.worker.postMessage(data)
             }
         })
@@ -176,17 +203,15 @@ class ExecutorWorker {
     }
 
     forceStop() {
-        if (this.worker) {
-            this.worker.terminate()
-        }
+        console.log(`ExecutorWorker: Forcefully terminating`)
 
-        if (this.socket) {
-            this.socket.disconnect()
-        }
+        this.worker?.terminate()
+        this.socket?.disconnect()
 
         postMessage({
-            status: "done"
+            status: "terminated"
         })
+        console.log(`ExecutorWorker: Sending done`)
     }
 }
 
@@ -194,7 +219,8 @@ let executor = null
 
 onmessage = (evt) => {
     const message = evt.data
-    console.log(`Worker: Received command: ${message.command}`)
+    console.log(message)
+    console.log(`ExecutorWorker: Received command: ${message.command}`)
 
     if (executor === null) {
         if (message.command === "start") {
@@ -202,7 +228,7 @@ onmessage = (evt) => {
             executor.start()
         }
         else if (message.command !== "stop") {
-            console.error("Worker: Executor is null but received non-start/stop command.")
+            console.error("ExecutorWorker: Executor is null but received non-start/stop command.")
         }
     }
     else {

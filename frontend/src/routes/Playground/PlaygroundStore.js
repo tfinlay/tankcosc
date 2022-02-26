@@ -1,8 +1,7 @@
 import { makeObservable, observable, action, computed, runInAction } from "mobx"
 import format from "date-fns/format"
-import { checkboxClasses } from "@mui/material"
 
-const DEFAULT_CODE_VALUE = `\
+/*const DEFAULT_CODE_VALUE = `\
 // Welcome to TankCosc!
 // You can write JavaScript source code for your bot in this box then hit "Run" to see what it does!
 // See below for a skeleton implementation for a bot that simply waits, scans, rotates, and shoots.
@@ -26,6 +25,27 @@ function main() {
 // Run the 'main' function forever
 while (true) {
     main();
+}
+`*/
+
+const DEFAULT_CODE_VALUE = `\
+// Welcome to TankCosc!
+// You can write JavaScript source code for your bot in this box then hit "Run" to see what it does!
+// See below for a skeleton implementation for a bot that simply waits, scans, rotates, and shoots.
+
+async function main() {
+    print("main loop");
+    while (energy > 100) {
+        await shoot(100);
+        print("shoot");
+        await rotate(5);
+        print("rotate");
+    }
+}
+
+// Run the 'main' function forever
+while (true) {
+    await main();
 }
 `
 
@@ -67,7 +87,7 @@ export class PlaygroundStore {
     _logEvent(message) {
         this.logs.push({
             date: format(new Date(), 'yyyy-MM-dd hh:mm:ss'),
-            message: message
+            message: (typeof message === 'string' || message instanceof String) ? message : JSON.stringify(message)
         })
     }
 
@@ -76,7 +96,7 @@ export class PlaygroundStore {
         this.worker = null
     }
 
-    async start() {
+    start() {
         if (this.isRunning) {
             return
         }
@@ -95,12 +115,18 @@ export class PlaygroundStore {
             console.log(event)
             const message = event.data
 
-            if (message.status === "done") {
+            if (message.status === "terminated") {
+                this._destroyWorker()
+            }
+            else if (message.status === "done") {
                 this._destroyWorker()
             }
             else if (message.status === "error") {
-                this._logEvent(`[ERROR] Details: ${message.error.message} (lineno: ${message.error.lineno})`)
+                this._logEvent(`[ERROR] Details: ${message.errorMessage} (lineno: ${message.adjustedLineNumber})`)
                 this._destroyWorker()
+            }
+            else if (message.status === "log") {
+                this._logEvent(message.message)
             }
         })
 

@@ -104,7 +104,7 @@ def start(main_fn, key: str = None):
         raise Exception("A key is required to start.")
 
     # Connect
-    sio.connect('ws://127.0.0.1:3000/')
+    sio.connect('ws://127.0.0.1:5000/')
 
     # Wait until login succeeds
     while not logged_in and not exiting:
