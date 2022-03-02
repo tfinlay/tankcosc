@@ -4,6 +4,7 @@ import { Player } from "../Player"
 import { Tank } from "../Tank"
 import { Command } from "./command"
 import sortBy from "lodash/sortBy"
+import {CommandParameterError} from "../error/CommandParameterError";
 
 type ScanResponseEnemy = {distance: number, relativeAngle: number, name: string}
 
@@ -15,12 +16,18 @@ interface ScanCommandResponse {
  * Command to scan the tank's surroundings for enemies.
  */
 export class ScanCommand extends Command {
+    public static ENERGY = 200
 
     constructor() {
         super()
     }
 
     execute(player: Player, tank: Tank): ScanCommandResponse {
+        if (!tank.consumeExactEnergy(ScanCommand.ENERGY)) {
+            // They don't have enough energy.
+            throw new CommandParameterError(`The scan command requires ${ScanCommand.ENERGY} energy. You don't have enough`);
+        }
+
         const results: ScanResponseEnemy[] = []
 
         for (const playerConn of activePlayerConnections) {

@@ -89,7 +89,7 @@ onmessage = (evt) => {
 
     hp = message.hp;
     energy = message.energy;
-    lastScanResult = message.scan;
+    lastScanResult = message.scan ?? lastScanResult;
     ___INTERNAL_blockingAwaitingResponse = false;
 }
 `
