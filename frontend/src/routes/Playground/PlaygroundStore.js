@@ -7,7 +7,7 @@ const DEFAULT_CODE_VALUE = `\
 // See below for a skeleton implementation for a bot that simply waits, scans, rotates, and shoots.
 
 async function main() {
-    print(\`Health: \${hp}\\tEnergy: \${energy}\`);
+    print(\`Health: ${hp}\\tEnergy: ${energy}\`);
     if (energy > 300) {
         await scan();  // Uses 200 energy
 
@@ -16,6 +16,7 @@ async function main() {
             // We picked something up during the scan!
             // Rotate to the first thing we detected and shoot at it
             let target = lastScanResult[0];
+            print(\`Targeting enemy player: ${target.name}!\`);
             await rotate(target.relativeAngle);  // Rotate to point at the enemy
             await shoot(100);                    // Shoot with 100 energy
         }

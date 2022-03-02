@@ -5,7 +5,7 @@ import { Tank } from "../Tank"
 import { Command } from "./command"
 import sortBy from "lodash/sortBy"
 
-type ScanResponseEnemy = {distance: number, relativeAngle: number}
+type ScanResponseEnemy = {distance: number, relativeAngle: number, name: string}
 
 interface ScanCommandResponse {
     scan: ScanResponseEnemy[]
@@ -43,7 +43,8 @@ export class ScanCommand extends Command {
 
             results.push({
                 distance: distance,  // Distance
-                relativeAngle: rotationReading // Rotation
+                relativeAngle: rotationReading, // Rotation
+                name: playerConn.player.name
             })
         }
 
