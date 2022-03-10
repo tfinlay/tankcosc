@@ -56,6 +56,19 @@ export class Tank {
     }
 
     /**
+     * Consumes exactly the given amount of energy or nother.
+     * @param energy to consume
+     * @returns true if the energy was consumed successfully. False otherwise
+     */
+    consumeExactEnergy(energy: number): boolean {
+        if (this.energy >= energy) {
+            this.energy -= energy
+            return true
+        }
+        return false
+    }
+
+    /**
      * Subtract damage from hitpoints and return true if the tank is still alive.
      * @param damage Hit points to subtract.
      * @returns true if the tank still has hp > 0

@@ -16,6 +16,7 @@ async function main() {
             // We picked something up during the scan!
             // Rotate to the first thing we detected and shoot at it
             let target = lastScanResult[0];
+            print(\`Targeting enemy player: \${target.name}!\`);
             await rotate(target.relativeAngle);  // Rotate to point at the enemy
             await shoot(100);                    // Shoot with 100 energy
         }
