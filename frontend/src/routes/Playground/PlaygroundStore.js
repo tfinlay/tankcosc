@@ -78,6 +78,7 @@ export class PlaygroundStore {
             setSidePanelTab: action
         })
         this.key = key
+        this.code = localStorage.getItem("code") ?? DEFAULT_CODE_VALUE
     }
 
     get isRunning() {
@@ -86,6 +87,7 @@ export class PlaygroundStore {
 
     onCodeChange(value) {
         this.code = value
+        localStorage.setItem("code", value)
     }
 
     _logEvent(message) {
