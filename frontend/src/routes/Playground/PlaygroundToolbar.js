@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { usePlaygroundStore } from "./playground_store_context";
 import { AppBar, Button, Container, IconButton, Toolbar, Tooltip, Typography, Modal, Dialog, Divider } from "@mui/material"
 import ListAltIcon from '@mui/icons-material/ListAlt';
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { FilePickerPopupContent } from "./FilePicker"
 
 
@@ -20,31 +20,42 @@ export const PlaygroundToolbar = observer(() => {
                 <Container maxWidth="x1">
                     <Toolbar disableGutters>
                         <Box sx={{flexGrow: 1, display: 'flex'}}>
-                            <Button
-                                color="inherit"
-                                sx={{my: 2}}
-                                disabled={store.isRunning}
-                                onClick={() => store.start()}
-                            >
-                                Run
-                            </Button>
+                            <Tooltip title="Run (Ctrl + R)">
+                                <span>
+                                    <Button
+                                        color="inherit"
+                                        sx={{my: 2}}
+                                        disabled={store.isRunning}
+                                        onClick={() => store.start()}
+                                    >
+                                        Run
+                                    </Button>
+                                </span>
+                            </Tooltip>
 
-                            <Button
-                                color="inherit"
-                                sx={{my: 2}}
-                                disabled={!store.isRunning}
-                                onClick={() => store.stop()}
-                            >
-                                Stop
-                            </Button>
+                            <Tooltip title="Stop (Ctrl + Shift + R)">
+                                <span>
+                                    <Button
+                                        color="inherit"
+                                        sx={{my: 2}}
+                                        disabled={!store.isRunning}
+                                        onClick={() => store.stop()}
+                                    >
+                                        Stop
+                                    </Button>
+                                </span>
+                            </Tooltip>
+                            
 
-                            <Button
-                                color="inherit"
-                                sx={{my: 2, marginRight: 1}}
-                                onClick={onCopyKeyClicked}
-                            >
-                                Copy key
-                            </Button>
+                            <Tooltip title="Copy your secret key to the clipboard">
+                                <Button
+                                    color="inherit"
+                                    sx={{my: 2, marginRight: 1}}
+                                    onClick={onCopyKeyClicked}
+                                >
+                                    Copy key
+                                </Button>
+                            </Tooltip>
 
                             <Divider sx={{background: "white"}} orientation="vertical" variant="middle" light={true} flexItem />
 
@@ -52,13 +63,15 @@ export const PlaygroundToolbar = observer(() => {
                                 {store.currentFileName}
                             </Typography>
 
-                            <Button
-                                color="inherit"
-                                sx={{my: 2}}
-                                onClick={() => store.setFilePickerOpen(true)}
-                            >
-                                Choose File
-                            </Button>
+                            <Tooltip title="Open a different code file (Ctrl + O)">
+                                <Button
+                                    color="inherit"
+                                    sx={{my: 2}}
+                                    onClick={() => store.setFilePickerOpen(true)}
+                                >
+                                    Choose File
+                                </Button>
+                            </Tooltip>
                         </Box>
 
                         <Box sx={{flexGrow: 0}}>
