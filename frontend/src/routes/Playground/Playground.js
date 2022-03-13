@@ -33,6 +33,11 @@ const PlaygroundContent = observer(() => {
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_R, () => store.start())
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_R, () => store.stop())
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_O, () => store.setFilePickerOpen(true))
+
+        // Disable 'unnecessary await' quick fix recommendation (since it reports await as unnecessary for print)
+        monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+            diagnosticCodesToIgnore: [80007]
+        })
     }, [store])
 
     return (
