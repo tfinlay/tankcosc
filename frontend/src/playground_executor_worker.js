@@ -71,11 +71,15 @@ function rotate(degrees) {
 // Non-transactional
 
 function print(val) {
-    postMessage({
-        command: "print",
-        args: [val]
+    return new Promise((res, rej) => {
+        setTimeout(() => {
+            postMessage({
+                command: "print",
+                args: [val]
+            });
+            res();
+        }, 0);
     });
-    return new Promise((res, rej) => res())
 }
 
 onmessage = (evt) => {
@@ -100,6 +104,9 @@ class ExecutorWorker {
     socket = null
     isFirstRun = true
 
+    logMessageBuffer = []
+    logMessageBufferFlushScheduled = false
+
     constructor(key, code) {
         this.key = key
         this.code = code
@@ -109,12 +116,24 @@ class ExecutorWorker {
         return WORKER_SCRIPT_HEADER + this.code
     }
 
+    _scheduleLogBufferFlushIfNecessary() {
+        if (!this.logMessageBufferFlushScheduled) {
+            setTimeout(() => {
+                postMessage({
+                    status: "log",
+                    messages: this.logMessageBuffer
+                })
+                this.logMessageBuffer.splice(0, this.logMessageBuffer.length)
+                this.logMessageBufferFlushScheduled = false
+            }, 300)
+            this.logMessageBufferFlushScheduled = true
+        }
+    }
+
     _handleWorkerCommand(command, args) {
         if (command === "print") {
-            postMessage({
-                status: "log",
-                message: args[0]
-            })
+            this.logMessageBuffer.push(args[0])
+            this._scheduleLogBufferFlushIfNecessary()
         }
         else if (command === "finished") {
             this.forceStop()
@@ -136,7 +155,8 @@ class ExecutorWorker {
         postMessage({
             command: "finished",
             args: []
-        });`
+        });
+        self.close();`
 
         const blob = new Blob([completeCode], {type: "application/javascript"})
         this.worker = new Worker(URL.createObjectURL(blob), {type: "module"})
@@ -183,6 +203,12 @@ class ExecutorWorker {
                 console.log("Sending response to worker...")
                 this.worker.postMessage(data)
             }
+
+            postMessage({
+                status: "bot_update",
+                hp: data.hp,
+                energy: data.energy
+            })
         })
     }
 
@@ -212,6 +238,8 @@ class ExecutorWorker {
             status: "terminated"
         })
         console.log(`ExecutorWorker: Sending done`)
+        // eslint-disable-next-line no-restricted-globals
+        self.close()
     }
 }
 

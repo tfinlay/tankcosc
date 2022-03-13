@@ -1,9 +1,10 @@
 import Box from "@mui/material/Box"
 import { observer } from "mobx-react-lite";
 import { usePlaygroundStore } from "./playground_store_context";
-import { AppBar, Button, Container, IconButton, Toolbar, Tooltip, Typography } from "@mui/material"
+import { AppBar, Button, Container, IconButton, Toolbar, Tooltip, Typography, Modal, Dialog, Divider } from "@mui/material"
 import ListAltIcon from '@mui/icons-material/ListAlt';
-import { useCallback } from "react";
+import { useState, useCallback } from "react";
+import { FilePickerPopupContent } from "./FilePicker"
 
 
 export const PlaygroundToolbar = observer(() => {
@@ -14,51 +15,75 @@ export const PlaygroundToolbar = observer(() => {
     }, [store.key])
 
     return (
-        <AppBar position="relative" color="secondary" elevation={0} height={68.5}>
-            <Container maxWidth="x1">
-                <Toolbar disableGutters>
-                    <Box sx={{flexGrow: 1, display: 'flex'}}>
-                        <Button
-                            color="inherit"
-                            sx={{my: 2}}
-                            disabled={store.isRunning}
-                            onClick={() => store.start()}
-                        >
-                            Run
-                        </Button>
-
-                        <Button
-                            color="inherit"
-                            sx={{my: 2}}
-                            disabled={!store.isRunning}
-                            onClick={() => store.stop()}
-                        >
-                            Stop
-                        </Button>
-
-                        <Button
-                            color="inherit"
-                            sx={{my: 2}}
-                            onClick={onCopyKeyClicked}
-                        >
-                            Copy key
-                        </Button>
-                    </Box>
-
-                    <Box sx={{flexGrow: 0}}>
-                        <Tooltip title={`${store.displaySidePanel ? 'Hide' : 'Show'} side panel`}>
-                            <IconButton
+        <>
+            <AppBar position="relative" color="secondary" elevation={0} height={68.5}>
+                <Container maxWidth="x1">
+                    <Toolbar disableGutters>
+                        <Box sx={{flexGrow: 1, display: 'flex'}}>
+                            <Button
                                 color="inherit"
-                                size="large"
-                                aria-label={`${store.displaySidePanel ? 'hide' : 'show'} side panel`}
-                                onClick={() => store.toggleSidePanel()}
+                                sx={{my: 2}}
+                                disabled={store.isRunning}
+                                onClick={() => store.start()}
                             >
-                                <ListAltIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                </Toolbar>
-            </Container>
-        </AppBar>
+                                Run
+                            </Button>
+
+                            <Button
+                                color="inherit"
+                                sx={{my: 2}}
+                                disabled={!store.isRunning}
+                                onClick={() => store.stop()}
+                            >
+                                Stop
+                            </Button>
+
+                            <Button
+                                color="inherit"
+                                sx={{my: 2, marginRight: 1}}
+                                onClick={onCopyKeyClicked}
+                            >
+                                Copy key
+                            </Button>
+
+                            <Divider sx={{background: "white"}} orientation="vertical" variant="middle" light={true} flexItem />
+
+                            <Typography variant='body1' color='inherit' noWrap component='div' sx={{ paddingLeft: 2, paddingRight: 1, lineHeight: "68px" }}>
+                                {store.currentFileName}
+                            </Typography>
+
+                            <Button
+                                color="inherit"
+                                sx={{my: 2}}
+                                onClick={() => store.setFilePickerOpen(true)}
+                            >
+                                Choose File
+                            </Button>
+                        </Box>
+
+                        <Box sx={{flexGrow: 0}}>
+                            <Tooltip title={`${store.displaySidePanel ? 'Hide' : 'Show'} side panel`}>
+                                <IconButton
+                                    color="inherit"
+                                    size="large"
+                                    aria-label={`${store.displaySidePanel ? 'hide' : 'show'} side panel`}
+                                    onClick={() => store.toggleSidePanel()}
+                                >
+                                    <ListAltIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+
+            <Dialog
+                open={store.filePickerOpen}
+                onClose={() => store.setFilePickerOpen(false)}
+                scroll="body"
+            >
+                <FilePickerPopupContent onClose={() => store.setFilePickerOpen(false)}/>
+            </Dialog>
+        </>
     )
 })
