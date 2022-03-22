@@ -72,13 +72,11 @@ function rotate(degrees) {
 
 function print(val) {
     return new Promise((res, rej) => {
-        setTimeout(() => {
-            postMessage({
-                command: "print",
-                args: [val]
-            });
-            res();
-        }, 0);
+        postMessage({
+            command: "print",
+            args: [val]
+        });
+        res();
     });
 }
 
