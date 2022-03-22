@@ -3,10 +3,11 @@ import {BrowserRouter as Router, Routes, Route, Link as RouterLink} from 'react-
 import { Home } from './routes/Home'
 import {NavBar} from './component/NavBar'
 import {Register} from './routes/Register'
-import {Board} from './routes/Board'
+import {ClassicBoard} from './routes/ClassicBoard'
 import {Playground} from './routes/Playground/Playground'
 import {NotFound} from './routes/NotFound'
 import Paper from '@mui/material/Paper'
+import {Board} from "./routes/Board/Board";
 
 const App = () => {
     return (
@@ -16,6 +17,7 @@ const App = () => {
 
                 <Routes>
                     <Route path="/" element={<Home/>} />
+                    <Route path="classicBoard" element={<ClassicBoard/>} />
                     <Route path="board" element={<Board/>} />
                     <Route path="register" element={<Register/>} />
                     <Route path="playground/:key" element={<Playground/>} />

@@ -2,7 +2,7 @@ import { Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogConten
 import {useEffect, useState} from "react"
 import { GAME_SERVER_PATH } from "../config"
 
-export const Board = () => {
+export const ClassicBoard = () => {
 
     const [key, setKey] = useState(null)
 
