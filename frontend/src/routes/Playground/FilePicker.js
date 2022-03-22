@@ -166,6 +166,7 @@ const FileNameChooserDialog = observer(({open, onClose}) => {
                     <Box>
                         <TextField
                             id="filepicker-name-input"
+                            autoFocus
                             label="File name"
                             variant="outlined"
                             value={name}
