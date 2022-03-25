@@ -20,8 +20,9 @@ export class BoardStore {
             projectiles: observable,
 
             start: action,
-            _onDisconnect: action,
             _setupSocket: action,
+            _onDisconnect: action,
+            _onLoginRequest: action,
             _onLoginError: action,
             _onUpdate: action
         })
@@ -32,6 +33,12 @@ export class BoardStore {
     start() {
         this.currentStatus = null
         this._setupSocket()
+    }
+
+    dispose() {
+        if (this.socket) {
+            this.socket.disconnect()
+        }
     }
 
     _setupSocket() {

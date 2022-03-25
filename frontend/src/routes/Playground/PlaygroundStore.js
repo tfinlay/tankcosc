@@ -285,4 +285,8 @@ export class PlaygroundStore {
     setSidePanelTab(newValue) {
         this.sidePanelTab = newValue
     }
+
+    dispose() {
+        this.stop();
+    }
 }

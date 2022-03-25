@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
 import CircularProgress from '@mui/material/CircularProgress'
-import { useParams, useSearchParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import {PlaygroundStoreContext, usePlaygroundStore} from "./playground_store_context"
 import {observer} from "mobx-react-lite"
-import { useCallback, useState } from "react"
+import {useCallback, useEffect, useState} from "react"
 import { PlaygroundStore } from "./PlaygroundStore"
 import Editor from "@monaco-editor/react"
 import { PlaygroundToolbar } from "./PlaygroundToolbar"
@@ -15,6 +15,12 @@ export const Playground = () => {
     const key = useParams().key
 
     const [store, _] = useState(() => new PlaygroundStore(key))
+
+    useEffect(() => {
+        return () => {
+            store.dispose();
+        }
+    }, [store])
 
     return (
         <PlaygroundStoreContext.Provider value={store}>

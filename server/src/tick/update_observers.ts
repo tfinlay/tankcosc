@@ -28,8 +28,10 @@ export const buildObserverUpdate = async () => {
     const serialisedTanks = []
     for (const conn of activePlayerConnections) {
         const tank = conn.tank
+        const player = await db.getPlayer(conn.playerId)
         serialisedTanks.push({
-            colour: (await db.getPlayer(conn.playerId)).colour,
+            colour: player.colour,
+            playerName: player.name,
             x: tank.location.x,
             y: tank.location.y,
             angle: tank.angle.degrees,
