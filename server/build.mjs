@@ -4,7 +4,9 @@ import pkg from 'ncp';
 const { ncp } = pkg;
 
 // Delete Dist
-fs.rmdirSync("dist", { recursive: true });
+if (fs.existsSync("dist")) {
+    fs.rmdirSync("dist", { recursive: true });
+}
 
 // Copy public
 await ncp("public", "dist")

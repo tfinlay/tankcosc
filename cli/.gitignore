@@ -100,3 +100,5 @@ tests/cases/user/prettier/prettier
 .eslintcache
 
 dist/
+bin/
+devcli.exe
