@@ -1,6 +1,7 @@
 import { PlayerConnection } from "./connection/PlayerConnection"
 import { Player } from "./Player"
 import { Projectile } from "./Projectile"
+import { DatabaseClient } from "./server/persistence/DatabaseClient"
 
 
 
@@ -8,8 +9,7 @@ import { Projectile } from "./Projectile"
 export const connectionUpdateBuffer: PlayerConnection[] = []
 export const activePlayerConnections: Set<PlayerConnection> = new Set()
 
-export const players: Map<string, Player> = new Map()  // Map to players by key
-export const playerNames: Set<string> = new Set()
+export const db = new DatabaseClient()
 
 // Projectiles
 export const activeProjectiles: Set<Projectile> = new Set()

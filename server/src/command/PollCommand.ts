@@ -12,7 +12,7 @@ export class PollCommand extends Command {
         super()
     }
 
-    execute(player: Player, tank: Tank) {
+    execute(player: string, tank: Tank) {
         
     }
 }

@@ -1,10 +1,9 @@
 import { CanvasLocation } from "./CanvasLocation";
 import { DegreeAngle } from "./DegreeAngle";
-import { Player } from "./Player";
 import { Tank } from "./Tank";
 
 export abstract class Projectile {
-    readonly owner: Player
+    readonly ownerId: string
 
     location: CanvasLocation
 
@@ -13,13 +12,13 @@ export abstract class Projectile {
 
     /**
      * Construct a Projectile.
-     * @param owner Player that owns this projectile.
+     * @param ownerId ID of player that owns this projectile.
      * @param location Initial location of this projectile.
      * @param speed Distance the projectile travels per tick.
      * @param direction Direction that the projectile travels in.
      */
-    constructor(owner: Player, location: CanvasLocation, speed: number, direction: DegreeAngle) {
-        this.owner = owner
+    protected constructor(ownerId: string, location: CanvasLocation, speed: number, direction: DegreeAngle) {
+        this.ownerId = ownerId
         this.location = location
         this.speed = speed
         this.direction = direction

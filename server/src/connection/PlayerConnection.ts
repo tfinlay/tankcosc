@@ -14,15 +14,15 @@ import { Connection } from "./connection";
  * Handles the lifetime of a socket connections.
  */
 export class PlayerConnection extends Connection {
-    readonly player: Player
+    readonly playerId: string
     readonly tank: Tank
     private readonly commandEventListeners = []
 
     private nextCommand: Command | null = null
 
-    constructor(socket: Socket, player: Player) {
+    constructor(socket: Socket, playerId: string) {
         super(socket)
-        this.player = player
+        this.playerId = playerId
         this.tank = Tank.random()
 
         socket.on("move", this.onMoveCommand.bind(this))
@@ -142,11 +142,11 @@ export class PlayerConnection extends Connection {
     /**
      * Called every tick. Processes the next command (if any) and pushes an update to the player.
      */
-    processCommandAndNotify(): void {
+    async processCommandAndNotify(): Promise<void> {
         let errorMessage: string | null = null
         let extraResponseFields: void | object
         try {
-            extraResponseFields = this.nextCommand?.execute(this.player, this.tank)
+            extraResponseFields = await this.nextCommand?.execute(this.playerId, this.tank)
         }
         catch (ex) {
             console.warn(`An error occurred when processing a command:`)

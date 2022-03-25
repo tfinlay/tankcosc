@@ -1,5 +1,5 @@
 import { DegreeAngle } from "../DegreeAngle"
-import { activePlayerConnections } from "../game_state"
+import { activePlayerConnections, db } from "../game_state"
 import { Player } from "../Player"
 import { Tank } from "../Tank"
 import { Command } from "./command"
@@ -22,7 +22,7 @@ export class ScanCommand extends Command {
         super()
     }
 
-    execute(player: Player, tank: Tank): ScanCommandResponse {
+    async execute(playerId: string, tank: Tank): Promise<ScanCommandResponse> {
         if (!tank.consumeExactEnergy(ScanCommand.ENERGY)) {
             // They don't have enough energy.
             throw new CommandParameterError(`The scan command requires ${ScanCommand.ENERGY} energy. You don't have enough`);
@@ -31,7 +31,7 @@ export class ScanCommand extends Command {
         const results: ScanResponseEnemy[] = []
 
         for (const playerConn of activePlayerConnections) {
-            if (playerConn.player === player) {
+            if (playerConn.playerId === playerId) {
                 continue;
             }
 
@@ -51,7 +51,7 @@ export class ScanCommand extends Command {
             results.push({
                 distance: distance,  // Distance
                 relativeAngle: rotationReading, // Rotation
-                name: playerConn.player.name
+                name: (await db.getPlayer(playerConn.playerId)).name
             })
         }
 

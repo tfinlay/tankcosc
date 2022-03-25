@@ -22,12 +22,12 @@ export class ShootCommand extends Command {
         this.energy = energy
     }
 
-    execute(player: Player, tank: Tank) {
+    execute(playerId: string, tank: Tank) {
         const energy = tank.consumeEnergy(this.energy)
 
         if (energy > 0) {
             const projectile = new BulletProjectile(
-                player,
+                playerId,
                 tank.location.copy(),
                 energy / 10,
                 tank.angle,

@@ -11,5 +11,5 @@ export abstract class Command {
      * @param tank to execute the command against
      * @returns a JSON-serialisable object to add to the return to the player
      */
-    abstract execute(player: Player, tank: Tank): object | void
+    abstract execute(playerId: string, tank: Tank): object | void
 }

@@ -4,13 +4,16 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc --noEmit && node ./build.mjs",
-    "serve": "yarn build && node ./dist/index.js"
+    "prebuild": "tsc --noEmit",
+    "build": "node ./build.mjs",
+    "prestart": "yarn build",
+    "start": "node ./dist/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "4",
     "lodash": "^4.17.21",
+    "lowdb": "^3.0.0",
     "socket.io": "^4.3.1",
     "source-map-support": "^0.5.20",
     "uuid": "^8.3.2"

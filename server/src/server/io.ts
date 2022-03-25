@@ -1,5 +1,5 @@
 import { PlayerConnection } from "../connection/PlayerConnection"
-import { activePlayerConnections, connectionUpdateBuffer, players } from "../game_state"
+import { activePlayerConnections, connectionUpdateBuffer, db } from "../game_state"
 import { OBSERVER_KEY } from "../global"
 import { buildObserverUpdate } from "../tick/update_observers"
 import { io } from "./server"
@@ -11,7 +11,7 @@ io.on("connection", (socket) => {
 
     const setupAsPlayerConnection = () => {
         console.log(socket.data.player)
-        playerConn = new PlayerConnection(socket, socket.data.player!)
+        playerConn = new PlayerConnection(socket, socket.data.playerId!)
         playerConn.addCommandEventListener(() => {
             connectionUpdateBuffer.push(playerConn)
         })
@@ -25,12 +25,12 @@ io.on("connection", (socket) => {
     }
     else {
         // Determine socket type via login.
-        socket.once("login", (type: string, key: string) => {
+        socket.once("login", async (type: string, key: string) => {
             if (type === "observer") {
                 if (OBSERVER_KEY === key) {
                     socket.join("observer")
                     socket.emit("login_success")
-                    socket.emit("update", ...buildObserverUpdate())
+                    socket.emit("update", ...(await buildObserverUpdate()))
                 }
                 else {
                     socket.emit("loginError", "Key is invalid.")
@@ -38,9 +38,10 @@ io.on("connection", (socket) => {
                 }
             }
             else if (type === "player") {
-                if (players.has(key)) {
+                if (await db.playerExists(key)) {
                     socket.join("player")
-                    socket.data.player = players.get(key)
+                    socket.data.playerId = key
+                    socket.data.player = await db.getPlayer(key)
                     setupAsPlayerConnection()
                 }
                 else {

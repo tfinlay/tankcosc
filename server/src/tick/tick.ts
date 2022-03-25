@@ -1,5 +1,5 @@
 import { performance } from 'perf_hooks'
-import { activePlayerConnections, activeProjectiles, connectionUpdateBuffer } from '../game_state'
+import { activePlayerConnections, activeProjectiles, connectionUpdateBuffer, db } from '../game_state'
 import { updateObservers } from './update_observers'
 
 const updateProjectiles = () => {
@@ -11,17 +11,17 @@ const updateProjectiles = () => {
     }
 }
 
-const chargeAndCheckForCollisions = () => {
+const chargeAndCheckForCollisions = async () => {
     for (const conn of activePlayerConnections) {
         const tank = conn.tank
 
         // Check for collisions with projectiles
         for (const projectile of activeProjectiles) {
-            if (projectile.owner !== conn.player && projectile.collidingWith(tank)) {
+            if (projectile.ownerId !== conn.playerId && projectile.collidingWith(tank)) {
                 activeProjectiles.delete(projectile)
                 const tankIsDead = conn.handleTankDamage(projectile.calculateDamage(tank))
                 if (tankIsDead) {
-                    projectile.owner.score += 100
+                    await db.addToPlayerScore(projectile.ownerId, 100)
                 }
             }
         }
@@ -40,7 +40,7 @@ const updateAndNotifyTanks = () => {
     }
 }
 
-export const runGameTick = () => {
+export const runGameTick = async () => {
     const startTime = performance.now()
 
     // Process commands and send back responses.
@@ -50,12 +50,12 @@ export const runGameTick = () => {
     updateProjectiles()
 
     // Check for collisions and charge tanks
-    chargeAndCheckForCollisions()
+    await chargeAndCheckForCollisions()
 
     // Clear the buffer.
     connectionUpdateBuffer.splice(0, connectionUpdateBuffer.length);
 
-    updateObservers()
+    await updateObservers()
     
 
     const endTime = performance.now()

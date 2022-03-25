@@ -3,12 +3,12 @@
  */
 
 import { io } from "../server/server"
-import { activePlayerConnections, activeProjectiles, players } from "../game_state"
+import { activePlayerConnections, activeProjectiles, db } from "../game_state"
 import { Tank } from "../Tank"
 
-export const buildObserverUpdate = () => {
+export const buildObserverUpdate = async () => {
     const serialisedPlayers = []
-    for (const player of players.values()) {
+    for (const player of (await db.listPlayers())) {
         serialisedPlayers.push({
             name: player.name,
             colour: player.colour,
@@ -27,10 +27,9 @@ export const buildObserverUpdate = () => {
 
     const serialisedTanks = []
     for (const conn of activePlayerConnections) {
-        const player = conn.player
         const tank = conn.tank
         serialisedTanks.push({
-            colour: player.colour,
+            colour: (await db.getPlayer(conn.playerId)).colour,
             x: tank.location.x,
             y: tank.location.y,
             angle: tank.angle.degrees,
@@ -46,6 +45,6 @@ export const buildObserverUpdate = () => {
     return [serialisedPlayers, serialisedTanks, serialisedProjectiles]
 }
 
-export const updateObservers = () => {
-    io.to("observer").emit("update", ...buildObserverUpdate())
+export const updateObservers = async () => {
+    io.to("observer").emit("update", ...(await buildObserverUpdate()))
 }

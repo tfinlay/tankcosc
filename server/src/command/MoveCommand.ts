@@ -19,7 +19,7 @@ export class MoveCommand extends Command {
         this.energy = energy
     }
 
-    execute(player: Player, tank: Tank) {
+    execute(player: string, tank: Tank) {
         const energy = tank.consumeEnergy(this.energy)
 
         if (energy > 0) {

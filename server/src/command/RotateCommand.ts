@@ -16,7 +16,7 @@ export class RotateCommand extends Command {
         this.degrees = degrees
     }
 
-    execute(player: Player, tank: Tank) {
+    execute(player: string, tank: Tank) {
         tank.rotate(new DegreeAngle(this.degrees))
     }
 }

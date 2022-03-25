@@ -10,8 +10,8 @@ import { Tank } from "./Tank";
 export class BulletProjectile extends Projectile {
     readonly radius: number
 
-    constructor(owner: Player, location: CanvasLocation, speed: number, direction: DegreeAngle, radius: number) {
-        super(owner, location, speed, direction)
+    constructor(ownerId: string, location: CanvasLocation, speed: number, direction: DegreeAngle, radius: number) {
+        super(ownerId, location, speed, direction)
         this.radius = radius
     }
 

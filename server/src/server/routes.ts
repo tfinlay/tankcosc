@@ -1,4 +1,4 @@
-import { playerNames, players } from "../game_state"
+import { db } from "../game_state"
 import { generatePrivateKey } from "../global"
 import { Player } from "../Player"
 import { app } from "./server"
@@ -15,17 +15,16 @@ app.get('/board', (req, res) => {
 app.get('/register', (req, res) => {
     res.sendFile(__dirname + '/register.html')
 })
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     const name = req.body.name
-    if (typeof name === 'string' && name && !playerNames.has(name)) {
+    if (typeof name === 'string' && name && (await db.getPlayerNames()).indexOf(name) === -1) {
         // Register the player
         const player = new Player(name, ColourGenerator.default.getNextString())
         const key = generatePrivateKey()
 
-        players.set(key, player)
-        playerNames.add(name)
+        await db.setPlayer(key, player)
 
         res.end(JSON.stringify({
             name: name,
