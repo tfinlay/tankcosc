@@ -5,6 +5,7 @@ import { Tank } from "../Tank"
 import { Command } from "./command"
 import sortBy from "lodash/sortBy"
 import {CommandParameterError} from "../error/CommandParameterError";
+import Config from "../config";
 
 type ScanResponseEnemy = {distance: number, relativeAngle: number, name: string}
 
@@ -45,7 +46,7 @@ export class ScanCommand extends Command {
             const distance = Math.sqrt(dx*dx + dy*dy)
 
             const rotation = new DegreeAngle(angle - tank.angle.degrees).degrees
-            const rotationFuzziness = ((distance*distance) * (1/10000) * (Math.random() - 0.5))  // Noise increases with the square of the distance
+            const rotationFuzziness = (Config.scanUncertainty) ? ((distance*distance) * (1/10000) * (Math.random() - 0.5)) : 0  // Noise increases with the square of the distance
             const rotationReading = ((-0.1 < rotation && rotation < 0.1 ) ? 0 : rotation) + rotationFuzziness
 
             results.push({
