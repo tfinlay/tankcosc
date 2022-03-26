@@ -25,12 +25,41 @@ export class BulletProjectile extends Projectile {
         return this.speed * 20
     }
 
-    public collidingWith(tank: Tank): boolean {
-        const dx = tank.location.x - this.location.x
-        const dy = tank.location.y - this.location.y
-        const radiusSum = Tank.RADIUS + this.radius
+    protected getLineLength(ax, ay, bx, by) {
+        return Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2))
+    }
 
-        return dx*dx + dy*dy <= radiusSum * radiusSum
+    public collidedInLastTickWith(tank: Tank): boolean {
+        // Compliments to: https://math.stackexchange.com/a/408020
+        const Cx = tank.location.x
+        const Cy = tank.location.y
+        const R = Tank.RADIUS
+
+        const Ax = this.location.x
+        const Bx = this.lastTickLocation.x
+        const Ay = this.location.y
+        const By = this.lastTickLocation.y
+
+        const d = this.getLineLength(Ax, Ay, Bx, By)
+        const alpha = (1/(d*d))*((Bx-Ax)*(Cx-Ax)+(By-Ay)*(Cy-Ay))
+
+        const Mx = Ax + (Bx - Ax)*alpha
+        const My = Ay + (By - Ay)*alpha
+
+        const lenMC = this.getLineLength(Cx, Cy, Mx, My)
+
+        if (lenMC <= R) {
+            // Check if M is in the segment
+            if (this.getLineLength(Mx, My, Ax, Ay) <= d || this.getLineLength(Mx, My, Bx, By) <= d) {
+                return true
+            }
+            else {
+                // Check if the segment and circle intersect
+                return this.getLineLength(Ax, Ay, Cx, Cy) <= R || this.getLineLength(Bx, By, Cx, Cy) <= R
+            }
+        }
+
+        return false
     }
     
     serialise() {

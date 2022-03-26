@@ -1,6 +1,7 @@
 import { performance } from 'perf_hooks'
 import { activePlayerConnections, activeProjectiles, connectionUpdateBuffer, db } from '../game_state'
 import { updateObservers } from './update_observers'
+import Config from "../config";
 
 const updateProjectiles = () => {
     for (const projectile of activeProjectiles) {
@@ -17,7 +18,7 @@ const chargeAndCheckForCollisions = async () => {
 
         // Check for collisions with projectiles
         for (const projectile of activeProjectiles) {
-            if (projectile.ownerId !== conn.playerId && projectile.collidingWith(tank)) {
+            if (projectile.ownerId !== conn.playerId && projectile.collidedInLastTickWith(tank)) {
                 activeProjectiles.delete(projectile)
                 const tankIsDead = conn.handleTankDamage(projectile.calculateDamage(tank))
                 if (tankIsDead) {
@@ -64,5 +65,5 @@ export const runGameTick = async () => {
         console.warn(`Tick processing time took more than ${endTime-startTime}ms.`)
     }
 
-    setTimeout(runGameTick, 100)
+    setTimeout(runGameTick, (Config.slowTick) ? 1000 : 100)
 }

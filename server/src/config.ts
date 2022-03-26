@@ -1,9 +1,11 @@
 export type ConfigType = {
-  scanUncertainty: boolean
+  scanUncertainty: boolean,
+  slowTick: boolean
 }
 
 const Config: ConfigType = {
-  scanUncertainty: false
+  scanUncertainty: false,
+  slowTick: false
 }
 
 export default Config;

@@ -10,6 +10,8 @@ export abstract class Projectile {
     speed: number
     direction: DegreeAngle
 
+    protected lastTickLocation: CanvasLocation | undefined
+
     /**
      * Construct a Projectile.
      * @param ownerId ID of player that owns this projectile.
@@ -30,6 +32,7 @@ export abstract class Projectile {
      * @returns true if the projectile should continue to exist. False to destroy it.
      */
     public tick(): boolean {
+        this.lastTickLocation = this.location.copy()
         this.location.moveWithAngle(this.speed, this.direction)
 
         return true
@@ -42,10 +45,10 @@ export abstract class Projectile {
     public abstract calculateDamage(tank: Tank): number
 
     /**
-     * Checks whether this projectile is colliding with the given tank.
+     * Checks whether this projectile collided with the given tank anytime in the last tick.
      * @param tank to check for collision with
      */
-    public abstract collidingWith(tank: Tank): boolean
+    public abstract collidedInLastTickWith(tank: Tank): boolean
 
     protected serialiseBase() {
         return {
