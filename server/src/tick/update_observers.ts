@@ -35,7 +35,8 @@ export const buildObserverUpdate = async () => {
             x: tank.location.x,
             y: tank.location.y,
             angle: tank.angle.degrees,
-            radius: Tank.RADIUS
+            radius: Tank.RADIUS,
+            hpPercentage: tank.hp / Tank.MAX_HP
         })
     }
 

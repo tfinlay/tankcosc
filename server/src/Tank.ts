@@ -13,6 +13,7 @@ export class Tank {
     static readonly DEFAULT_HP = 2000
     static readonly DEFAULT_ENERGY = 10000
     static readonly MAX_ENERGY = 10000000
+    static readonly MAX_HP = 2000
     static readonly ENERGY_HEAL_PER_TICK = 100
     static readonly RADIUS = 5
 

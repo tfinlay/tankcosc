@@ -4,7 +4,7 @@ export type ConfigType = {
 }
 
 const Config: ConfigType = {
-  scanUncertainty: false,
+  scanUncertainty: true,
   slowTick: false
 }
 
