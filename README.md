@@ -27,3 +27,19 @@ Playground while the bot is running:
 Playground with built-in coding documentation:
 
 ![Playground editing](readme_assets/playground2.png)
+
+## Contributing
+
+Contributions welcome! Sorry for the mess...
+
+### Future Goals
+
+In no particular order:
+
+- [ ] Make scoring more dynamic (#9)
+- [ ] Balance the game (#5)
+- [ ] Implement the CLI
+- [ ] Add teams (multiple players that work together and share the same score, colour, and leaderboard position)
+- [ ] Chromecast support (#10)
+- [ ] Make a website that automatically sets up game servers on-demand.
+- [ ] More things! Check the GitHub issues
