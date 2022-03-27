@@ -9,6 +9,7 @@ import { CommandParameterError } from "../error/CommandParameterError";
 import { Player } from "../Player";
 import { Tank } from "../Tank";
 import { Connection } from "./connection";
+import {HealCommand} from "../command/HealCommand";
 
 /**
  * Handles the lifetime of a socket connections.
@@ -30,6 +31,7 @@ export class PlayerConnection extends Connection {
         socket.on("shoot", this.onShootCommand.bind(this))
         socket.on("scan", this.onScanCommand.bind(this))
         socket.on("poll", this.onPollCommand.bind(this))
+        socket.on("heal", this.onHealCommand.bind(this))
     }
 
     addCommandEventListener(callback: (command: Command) => void) {
@@ -103,6 +105,21 @@ export class PlayerConnection extends Connection {
         let command: PollCommand
         try {
             command = new PollCommand()
+        }
+        catch (ex) {
+            return
+        }
+
+        this.queueCommand(command)
+    }
+
+    /**
+     * Handles receiving the 'heal' command
+     */
+    private onHealCommand(energy: number): void {
+        let command: HealCommand
+        try {
+            command = new HealCommand(energy)
         }
         catch (ex) {
             return

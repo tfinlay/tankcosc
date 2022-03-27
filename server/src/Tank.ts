@@ -70,6 +70,18 @@ export class Tank {
     }
 
     /**
+     * Heal the tank the given number of hit points
+     * @param hitPoints to heal
+     */
+    healHp(hitPoints: number): void {
+        if (hitPoints < 0) {
+            throw new RangeError("Cannot heal a negative number of hitPoints")
+        }
+
+        this.hp = Math.min(Tank.MAX_HP, this.hp + hitPoints)
+    }
+
+    /**
      * Subtract damage from hitpoints and return true if the tank is still alive.
      * @param damage Hit points to subtract.
      * @returns true if the tank still has hp > 0

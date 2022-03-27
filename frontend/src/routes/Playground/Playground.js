@@ -146,6 +146,27 @@ const PlaygroundLogsPanel = observer(() => {
 const PlaygroundDocumentationPanel = () => {
     return (
         <Box>
+            <Typography variant="h5">Gameplay</Typography>
+            <Typography variant="body1">
+              You are writing code to control a 'tank' as it fights others on the big screen.<br/>
+              The game is turn-based (though the turns are very fast - fractions of a second), so each command your tank is given takes a number of turns.<br/>
+              Each turn the following things occur in order:<br/>
+              <ol>
+                <li>Your last command is executed and you receive a status update from your tank.</li>
+                <li>Projectiles are moved.</li>
+                <li>Collisions are checked and your tank will take damage or be destroyed if it is hit.</li>
+                <li>Your tank gains energy if it is still alive.</li>
+                <li>Repeat.</li>
+              </ol>
+            </Typography>
+            <Typography variant="body1" sx={{marginTop: 1}}>
+              Things to note:<br/>
+              <ul>
+                <li>Commands that take energy will not exceed the amount of energy available at the time they are executed. If you specify more energy than your tank has, only the amount you have will be used.</li>
+                <li>You are given energy every turn. HP is not automatically regenerated. You must call the <code>heal(energy)</code> function for this.</li>
+              </ul>
+            </Typography>
+
             <Typography variant="h5">Functions</Typography>
             <Typography variant="subtitle2">NOTE: Please place <code>await</code> before any of these function calls, otherwise your bot will lose sync with the server!</Typography>
 
@@ -170,10 +191,18 @@ const PlaygroundDocumentationPanel = () => {
 
             <Typography variant="h6" sx={{fontFamily: 'monospace', marginTop: 1}}>move(energy)</Typography>
             <Typography variant="body1">
-                Takes 1 turn. Consumes the given amount of energy an moves the tank a distance in the direction that it is facing.
+                Takes 1 turn. Consumes the given amount of energy and moves the tank a distance in the direction that it is facing.
             </Typography>
             <Typography variant="body1" sx={{marginTop: 1}}>
                 The distance travelled is given by this equation: <code>log10(log10(energy)) * 4 + 1</code>
+            </Typography>
+
+            <Typography variant="h6" sx={{fontFamily: 'monospace', marginTop: 1}}>heal(energy)</Typography>
+            <Typography variant="body1">
+              Takes 1 turn. Consumes the given amount of energy an heals the tank.
+            </Typography>
+            <Typography variant="body1" sx={{marginTop: 1}}>
+              The HP healed increases linearly with the amount of energy given.
             </Typography>
 
             <Typography variant="h6" sx={{fontFamily: 'monospace', marginTop: 1}}>scan()</Typography>
@@ -184,9 +213,14 @@ const PlaygroundDocumentationPanel = () => {
                 This data is placed into <code>lastScanResult</code>, which is an array of ranging measurements. For example, to get the distance and relative angle of the closest enemy from this tank:
 
                 <code>
-                    {`let target = lastScanResult[0];<br/>
-                    print(\`Distance: \${target.distance}. Rotation: \${target.relativeAngle}\`)`}
+                  {`let target = lastScanResult[0];`}<br/>
+                  {`print(\`Distance: \${target.distance}. Rotation: \${target.relativeAngle}\`);`}
                 </code>
+            </Typography>
+
+          <Typography variant="h6" sx={{marginTop: 1}}><code>wait()</code> or <code>poll()</code></Typography>
+            <Typography variant="body1">
+              Two equivalent functions that take 1 turn and do nothing.
             </Typography>
         </Box>
     )

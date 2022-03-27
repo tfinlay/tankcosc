@@ -44,13 +44,14 @@ function scan(energy) {
     return ___INTERNAL_blockUntilResponse();
 }
 
-function poll(energy) {
+function poll() {
     postMessage({
         command: "poll",
         args: []
     });
     return ___INTERNAL_blockUntilResponse();
 }
+const wait = poll;
 
 function shoot(energy) {
     postMessage({
@@ -64,6 +65,14 @@ function rotate(degrees) {
     postMessage({
         command: "rotate",
         args: [degrees]
+    });
+    return ___INTERNAL_blockUntilResponse();
+}
+
+function heal(energy) {
+    postMessage({
+        command: "heal",
+        args: [energy]
     });
     return ___INTERNAL_blockUntilResponse();
 }
@@ -108,10 +117,6 @@ class ExecutorWorker {
     constructor(key, code) {
         this.key = key
         this.code = code
-    }
-
-    _constructWorkerScript() {
-        return WORKER_SCRIPT_HEADER + this.code
     }
 
     _scheduleLogBufferFlushIfNecessary() {
