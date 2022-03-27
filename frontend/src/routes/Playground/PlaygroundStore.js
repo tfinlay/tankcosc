@@ -21,6 +21,9 @@ async function main() {
             await shoot(100);                    // Shoot with 100 energy
         }
     }
+    else {
+        await wait();
+    }
 }
 
 // Run the 'main' function forever
