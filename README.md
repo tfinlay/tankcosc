@@ -11,3 +11,19 @@ Players can join the game and write custom code to control their tank on the boa
 But that's all a bit high-level... What does gameplay actually look like? Check out this demo recording:
 
 [![TankCosc Demo](https://img.youtube.com/vi/it0__Wwqew8/0.jpg)](https://youtu.be/it0__Wwqew8)
+
+### Screenshots
+
+#### Game Board
+
+![Game Board](readme_assets/board.png)
+
+#### Playground
+
+Playground while the bot is running:
+
+![Playground running](readme_assets/playground1.png)
+
+Playground with built-in coding documentation:
+
+![Playground editing](readme_assets/playground2.png)
