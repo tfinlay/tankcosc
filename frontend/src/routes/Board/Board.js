@@ -170,13 +170,13 @@ const drawOnBoardCanvas = (store, canvasEl) => {
 
             ctx.fillStyle = tank.colour
             ctx.beginPath()
-            ctx.arc(tank.x, tank.y, 2, 0, 2*Math.PI)
+            ctx.arc(tank.x, tank.y, 1.5, 0, 2*Math.PI)
             ctx.fill()
         }
     }
 
+    ctx.fillStyle = "black"
     for (const proj of store.projectiles) {
-        ctx.fillStyle = proj.colour
         ctx.beginPath()
         ctx.arc(proj.x, proj.y, proj.radius, 0, 2*Math.PI)
         ctx.fill()
