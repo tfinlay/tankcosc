@@ -125,7 +125,7 @@ const drawOnBoardCanvas = (store, canvasEl) => {
 
     ctx.scale(3, 3)
 
-    ctx.font = "12px monospace"
+    ctx.font = "bold 12px monospace"
     ctx.textAlign = "center"
 
     ctx.clearRect(0, 0, canvasEl.width, canvasEl.height)
