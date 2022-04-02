@@ -39,6 +39,14 @@ io.on("connection", (socket) => {
             }
             else if (type === "player") {
                 if (await db.playerExists(key)) {
+                    for (const conn of activePlayerConnections) {
+                        if (conn.playerId === key) {
+                            socket.emit("loginError", "You cannot join using the same key twice.")
+                            socket.disconnect()
+                            return
+                        }
+                    }
+
                     socket.join("player")
                     socket.data.playerId = key
                     socket.data.player = await db.getPlayer(key)

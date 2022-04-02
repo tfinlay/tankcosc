@@ -9,7 +9,8 @@
     "build": "node ./build.mjs",
     "prepackage": "yarn build",
     "package": "pkg .",
-    "devPackage": "yarn build && pkg ./bin/index.js -o devcli"
+    "devPackage": "yarn build && pkg ./bin/index.js -o devcli",
+    "start": "yarn devPackage && devcli"
   },
   "pkg": {
     "targets": [
