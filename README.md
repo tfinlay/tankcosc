@@ -8,7 +8,7 @@ TankCOSC is designed to be played as an event with all players in the same room 
 
 Players can join the game and write custom code to control their tank on the board, earning points by destroying competitors' tanks. The API provided is very loose and intuitive, allowing for complex and divergent playing styles to be explored by players. Players can write and execute their code in a 'playground' environment in the browser (this is limited to JavaScript code), but in future a [CLI](cli) will allow players to write code in any language, communicating with the game server by simply using stdin/stdout.
 
-But that's all a bit high-level... What does gameplay actually look like? Check out this demo recording:
+But that's all a bit high-level... What does gameplay actually look like? Check out [this demo recording](https://youtu.be/it0__Wwqew8):
 
 [![TankCosc Demo](https://img.youtube.com/vi/it0__Wwqew8/0.jpg)](https://youtu.be/it0__Wwqew8)
 
@@ -27,3 +27,19 @@ Playground while the bot is running:
 Playground with built-in coding documentation:
 
 ![Playground editing](readme_assets/playground2.png)
+
+## Contributing
+
+Contributions welcome! Sorry for the mess...
+
+### Future Goals
+
+In no particular order:
+
+- [ ] Make scoring more dynamic (#9)
+- [ ] Balance the game (#5)
+- [ ] Implement the CLI
+- [ ] Add teams (multiple players that work together and share the same score, colour, and leaderboard position)
+- [ ] Chromecast support (#10)
+- [ ] Make a website that automatically sets up game servers on-demand.
+- [ ] More things! Check the GitHub issues
