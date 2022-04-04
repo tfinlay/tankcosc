@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client"
 import {ChildProcess} from "child_process";
+import {randomUUID} from "crypto";
 
 /**
  * Class that is given a live bot process and socket to the game server and manages communication
@@ -13,7 +14,8 @@ export class BotExecutionManager {
   isFinished: boolean = false
   lastCommand: string | null = null
 
-  botIsReadyForResponse: boolean = true
+  lastCommandUuid: string | undefined = undefined
+  isAwaitingFirstMessage: boolean = true
 
   constructor(socket: Socket, botProcess: ChildProcess, onFinished: VoidFunction) {
     this.socket = socket
@@ -47,7 +49,11 @@ export class BotExecutionManager {
     })
 
     this.botProcess.stderr.pipe(process.stderr)
-    this.botProcess.stdout.on("data", (data) => this.handleBotCommand(data))
+    this.botProcess.stdout.on("data", (data) => {
+      for (const line of data.trim().split("\n")) {
+        this.handleBotCommand(line)
+      }
+    })
   }
 
   subscribeToSocket() {
@@ -57,20 +63,40 @@ export class BotExecutionManager {
   }
 
   handleBotCommand(rawData: string) {
-    const trimmedCommand = rawData.trim()
-    const [command, ...args] = trimmedCommand.split(" ")
-    this.socket.emit(command.toLowerCase(), ...args.map(parseInt))
-
-    this.lastCommand = trimmedCommand
-    this.botIsReadyForResponse = true;
-  }
-
-  handleSocketResponse(data) {
-    if (this.isFinished || !this.botIsReadyForResponse) {
+    if (this.lastCommandUuid !== undefined && !this.isAwaitingFirstMessage) {
+      console.warn("Your bot has sent another command before receiving a response for an earlier command. Are you making sure to wait for a response before sending?")
       return
     }
 
-    this.botIsReadyForResponse = false;
+    const trimmedCommand = rawData.trim()
+    const [command, ...args] = trimmedCommand.split(" ")
+    const commandUuid = randomUUID()
+    this.socket.emit(command.toLowerCase(), commandUuid, ...args.map(parseInt))
+
+    this.lastCommand = trimmedCommand
+    this.lastCommandUuid = commandUuid
+    this.isAwaitingFirstMessage = false
+  }
+
+  handleSocketResponse(data) {
+    if (this.isFinished) {
+      return
+    }
+
+    if (!this.isAwaitingFirstMessage) {
+      // UUID checking time
+      if (this.lastCommandUuid === undefined) {
+        console.warn("A server tick has passed in which your bot lodged no command. This can be caused by your bot being too slow or by sending additional commands before receiving a response.")
+        return
+      }
+      else if (this.lastCommandUuid !== data.uuid) {
+        console.warn("An unexpected message has been received from the game server... Are you making sure to wait for responses before you send messages?")
+        return
+      }
+    }
+
+    this.isAwaitingFirstMessage = false
+    this.lastCommandUuid = undefined;
 
     if (data.error) {
       console.error(`Error: ${data.error} (Last Command: ${this.lastCommand ?? "Unknown"})`)
@@ -78,8 +104,6 @@ export class BotExecutionManager {
 
     if (this.botProcess) {
       // Forcefully flush stdin every time.
-      console.log(data)
-
       this.botProcess.stdin.cork()
       this.botProcess.stdin.write(`${data.hp} ${data.energy}\n`)
 

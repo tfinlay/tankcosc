@@ -8,8 +8,8 @@ import { Command } from "./command"
  */
 export class PollCommand extends Command {
 
-    constructor() {
-        super()
+    constructor(uuid: string) {
+        super(uuid)
     }
 
     execute(player: string, tank: Tank) {

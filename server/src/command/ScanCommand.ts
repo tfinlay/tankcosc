@@ -19,8 +19,8 @@ interface ScanCommandResponse {
 export class ScanCommand extends Command {
     public static ENERGY = 200
 
-    constructor() {
-        super()
+    constructor(uuid: string) {
+        super(uuid)
     }
 
     async execute(playerId: string, tank: Tank): Promise<ScanCommandResponse> {

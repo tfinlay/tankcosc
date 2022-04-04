@@ -12,8 +12,8 @@ import { Command } from "./command"
 export class ShootCommand extends Command {
     readonly energy: number
 
-    constructor(energy: number) {
-        super()
+    constructor(uuid: string, energy: number) {
+        super(uuid)
 
         if (energy < 0) {
             throw new CommandParameterError()

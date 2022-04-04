@@ -3,6 +3,7 @@
  */
 import { io } from "socket.io-client"
 import { GAME_SERVER_PATH } from "./config"
+import { nanoid } from "nanoid"
 
 const WORKER_SCRIPT_HEADER = `
 let hp = -1, energy = -1, lastScanResult = null;
@@ -114,6 +115,10 @@ class ExecutorWorker {
     logMessageBuffer = []
     logMessageBufferFlushScheduled = false
 
+    logSyncErrors = true
+
+    lastCommandUuid = undefined
+
     constructor(key, code) {
         this.key = key
         this.code = code
@@ -143,7 +148,10 @@ class ExecutorWorker {
         }
         else {
             // Socket.IO commands!
-            this.socket.emit(command, ...args)
+            const uuid = nanoid()
+            this.socket.emit(command, uuid, ...args)
+
+            this.lastCommandUuid = uuid
         }
     }
 
@@ -179,6 +187,14 @@ class ExecutorWorker {
         })
     }
 
+    _logSyncError(message) {
+        if (this.logSyncErrors) {
+            this._log(`[SYNC ERROR] ${message}`)
+            this.logSyncErrors = false
+            setTimeout(() => this.logSyncErrors = true, 1000)
+        }
+    }
+
     _setupSocket() {
         this.socket = io(GAME_SERVER_PATH)
         this.socket.on("disconnect", () => {
@@ -203,8 +219,17 @@ class ExecutorWorker {
             }
             else {
                 // Notify the worker
-                console.log("Sending response to worker...")
-                this.worker.postMessage(data)
+                if (this.lastCommandUuid === undefined) {
+                    this._logSyncError("[WARNING]: A server tick has passed in which your bot lodged no command.")
+                }
+                else if (this.lastCommandUuid !== data.uuid) {
+                    this._logSyncError("[!!WARN!!]: An unexpected message has been received from the game server... Are you making sure to await every command?")
+                }
+                else {
+                    console.log("Sending response to worker...")
+                    this.worker.postMessage(data)
+                    this.lastCommandUuid = undefined
+                }
             }
 
             postMessage({

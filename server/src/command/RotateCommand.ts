@@ -10,8 +10,8 @@ import { Command } from "./command"
 export class RotateCommand extends Command {
     readonly degrees: number
 
-    constructor(degrees: number) {
-        super()
+    constructor(uuid: string, degrees: number) {
+        super(uuid)
 
         this.degrees = degrees
     }

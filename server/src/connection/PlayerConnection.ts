@@ -41,10 +41,10 @@ export class PlayerConnection extends Connection {
     /**
      * Handles receiving the 'move' command
      */
-    private onMoveCommand(energy: number): void {
+    private onMoveCommand(uuid: string, energy: number): void {
         let command: MoveCommand
         try {
-            command = new MoveCommand(energy)
+            command = new MoveCommand(uuid, energy)
         }
         catch (ex) {
             return
@@ -56,10 +56,10 @@ export class PlayerConnection extends Connection {
     /**
      * Handles receiving the 'shoot' command
      */
-    private onShootCommand(energy: number): void {
+    private onShootCommand(uuid: string, energy: number): void {
         let command: ShootCommand
         try {
-            command = new ShootCommand(energy)
+            command = new ShootCommand(uuid, energy)
         }
         catch (ex) {
             return
@@ -71,10 +71,10 @@ export class PlayerConnection extends Connection {
     /**
      * Handles receiving the 'rotate' command.
      */
-    private onRotateCommand(degrees: number): void {
+    private onRotateCommand(uuid: string, degrees: number): void {
         let command: RotateCommand
         try {
-            command = new RotateCommand(degrees)
+            command = new RotateCommand(uuid, degrees)
         }
         catch (ex) {
             return
@@ -86,10 +86,10 @@ export class PlayerConnection extends Connection {
     /**
      * Handles receiving the 'scan' command.
      */
-    private onScanCommand(): void {
+    private onScanCommand(uuid: string): void {
         let command: ScanCommand
         try {
-            command = new ScanCommand()
+            command = new ScanCommand(uuid)
         }
         catch (ex) {
             return
@@ -101,10 +101,10 @@ export class PlayerConnection extends Connection {
     /**
      * Handles receiving the 'poll' command.
      */
-     private onPollCommand(): void {
+     private onPollCommand(uuid: string): void {
         let command: PollCommand
         try {
-            command = new PollCommand()
+            command = new PollCommand(uuid)
         }
         catch (ex) {
             return
@@ -116,10 +116,10 @@ export class PlayerConnection extends Connection {
     /**
      * Handles receiving the 'heal' command
      */
-    private onHealCommand(energy: number): void {
+    private onHealCommand(uuid: string, energy: number): void {
         let command: HealCommand
         try {
-            command = new HealCommand(energy)
+            command = new HealCommand(uuid, energy)
         }
         catch (ex) {
             return
@@ -142,11 +142,12 @@ export class PlayerConnection extends Connection {
         return false
     }
 
-    private sendResponse(extraResponseFields: object | void, errorMessage?: string): void {
+    private sendResponse(commandUuid: string | undefined, extraResponseFields: object | void, errorMessage?: string): void {
         const data: any = {
             ...(extraResponseFields ?? {}),
             hp: this.tank.hp,
             energy: this.tank.energy,
+            uuid: commandUuid
         }
 
         if (errorMessage !== undefined) {
@@ -176,8 +177,9 @@ export class PlayerConnection extends Connection {
                 errorMessage = "An error occurred while processing your last command."
             }
         }
+        const commandUuid = this.nextCommand?.uuid
         this.nextCommand = null
-        this.sendResponse(extraResponseFields, errorMessage)
+        this.sendResponse(commandUuid, extraResponseFields, errorMessage)
     }
 
     /**

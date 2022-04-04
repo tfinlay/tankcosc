@@ -14,8 +14,8 @@ export class HealCommand extends Command {
     static readonly ENERGY_TO_HP_MULTIPLIER = 1 / 50
     readonly energy: number
 
-    constructor(energy: number) {
-        super()
+    constructor(uuid: string, energy: number) {
+        super(uuid)
 
         if (energy < 0) {
             throw new CommandParameterError()
