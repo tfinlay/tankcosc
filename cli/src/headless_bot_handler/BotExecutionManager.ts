@@ -64,6 +64,8 @@ export class BotExecutionManager {
   }
 
   handleBotCommand(rawData: string) {
+    Logger.log("echo", rawData)
+
     if (this.lastCommandUuid !== undefined && !this.isAwaitingFirstMessage) {
       Logger.warn("Your bot has sent another command before receiving a response for an earlier command. Are you making sure to wait for a response before sending?")
       return

@@ -30,10 +30,20 @@ export class HeadlessBotManager {
   }
 
   public async run() {
-    Logger.info("🌐 Connecting...")
+    const sigintListener = () => {
+      Logger.info("Exiting...")
+      this.onFinished()
+    }
+    process.on("SIGINT", sigintListener)
+
+    Logger.info("🔌 Connecting to game server...")
     await this.setupSocket()
     Logger.info("🤖 Spawning bot...")
-    await this.spawnBotProcess()
+    await this.runBotProcess()
+
+    Logger.debug("Disconnecting SIGINT handler")
+
+    process.off("SIGINT", sigintListener)
   }
 
   onFinished() {
@@ -47,6 +57,9 @@ export class HeadlessBotManager {
     return new Promise<void>((res, rej) => {
       this.socket = io(this.serverUrl, {
         reconnectionAttempts: 5
+      })
+      this.socket.on("connect", () => {
+        Logger.info("🌐 Connected to game server.")
       })
       this.socket.on("connect_error", () => {
         Logger.error("Failed to connect to game server.")
@@ -71,7 +84,7 @@ export class HeadlessBotManager {
     })
   }
 
-  async spawnBotProcess() {
+  async runBotProcess() {
     try {
       this.botProcess = this.botBuilder()
 

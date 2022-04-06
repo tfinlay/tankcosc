@@ -2,17 +2,17 @@ import winston, {createLogger} from "winston";
 
 const loggingLevels = {
     levels: {
-        echo: 0,
-        debug: 1,
+        echo: 4,
+        debug: 3,
         info: 2,
-        warn: 3,
-        error: 4
+        warn: 1,
+        error: 0
     },
     colors: {
         echo: 'black',
         debug: 'magenta',
         info: 'blue',
-        warn: 'orange',
+        warn: 'yellow',
         error: 'red'
     }
 }
@@ -20,7 +20,6 @@ const loggingLevels = {
 const logger = createLogger({
     transports: [
         new winston.transports.Console({
-            level: 'info',
             format: winston.format.combine(
                 winston.format.colorize(),
                 winston.format.simple()
@@ -31,5 +30,10 @@ const logger = createLogger({
     level: "info"
 })
 winston.addColors(loggingLevels.colors)
+
+export const setLogLevel = (level: "echo" | "debug" | "info" | "warn" | "error") => {
+    logger.transports.map(transport => transport.level = level)
+    logger.level = level
+}
 
 export default logger

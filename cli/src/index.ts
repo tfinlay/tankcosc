@@ -2,7 +2,7 @@
  * Entrypoint for the tankcosc CLI.
  */
 import {ArgumentParser} from "argparse"
-import Logger from "./logger";
+import Logger, {setLogLevel} from "./logger";
 import {runCommandHandler} from "./command_handler/run";
 import {generateCommandHandler} from "./command_handler/generate";
 
@@ -57,7 +57,10 @@ const main = async () => {
   const args = parser.parse_args()
 
   if (args.verbose) {
-    Logger.level = "debug"
+    setLogLevel(Logger.level = "debug")
+  }
+  else if (args.echo_commands) {
+    setLogLevel("echo")
   }
 
   Logger.debug("Received arguments:")
