@@ -1,6 +1,7 @@
 import { Socket } from "socket.io-client"
 import {ChildProcess} from "child_process";
 import {randomUUID} from "crypto";
+import Logger from "../logger";
 
 /**
  * Class that is given a live bot process and socket to the game server and manages communication
@@ -28,7 +29,7 @@ export class BotExecutionManager {
 
   finish(reason?: string) {
     if (reason) {
-      console.log(`Finished: ${reason}`)
+      Logger.warn(`Execution finished: ${reason}`)
     }
 
     this.isFinished = true
@@ -40,12 +41,12 @@ export class BotExecutionManager {
     this.botProcess.on("exit", () => this.finish("Bot process exited"))
     this.botProcess.on("close", () => this.finish("Bot process closed"))
     this.botProcess.on("error", (err) => {
-      console.error(err)
+      Logger.error(err)
       this.finish("Bot process errored")
     })
-    this.botProcess.on("spawn", () => console.log("Bot process spawned"))
+    this.botProcess.on("spawn", () => Logger.info("Bot process spawned"))
     this.botProcess.on("message", (message, sendHandle) => {
-      console.log(message)
+      Logger.info(`Received a message from your bot: ${message}`)
     })
 
     this.botProcess.stderr.pipe(process.stderr)
@@ -64,7 +65,7 @@ export class BotExecutionManager {
 
   handleBotCommand(rawData: string) {
     if (this.lastCommandUuid !== undefined && !this.isAwaitingFirstMessage) {
-      console.warn("Your bot has sent another command before receiving a response for an earlier command. Are you making sure to wait for a response before sending?")
+      Logger.warn("Your bot has sent another command before receiving a response for an earlier command. Are you making sure to wait for a response before sending?")
       return
     }
 
@@ -86,11 +87,11 @@ export class BotExecutionManager {
     if (!this.isAwaitingFirstMessage) {
       // UUID checking time
       if (this.lastCommandUuid === undefined) {
-        console.warn("A server tick has passed in which your bot lodged no command. This can be caused by your bot being too slow or by sending additional commands before receiving a response.")
+        Logger.warn("A server tick has passed in which your bot lodged no command. This can be caused by your bot being too slow or by sending additional commands before receiving a response.")
         return
       }
       else if (this.lastCommandUuid !== data.uuid) {
-        console.warn("An unexpected message has been received from the game server... Are you making sure to wait for responses before you send messages?")
+        Logger.warn("An unexpected message has been received from the game server... Are you making sure to wait for responses before you send messages?")
         return
       }
     }
@@ -99,7 +100,7 @@ export class BotExecutionManager {
     this.lastCommandUuid = undefined;
 
     if (data.error) {
-      console.error(`Error: ${data.error} (Last Command: ${this.lastCommand ?? "Unknown"})`)
+      Logger.error(`Error: ${data.error} (Last Command: ${this.lastCommand ?? "Unknown"})`)
     }
 
     if (this.botProcess) {

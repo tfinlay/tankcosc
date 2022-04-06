@@ -2,42 +2,77 @@
  * Entrypoint for the tankcosc CLI.
  */
 import {ArgumentParser} from "argparse"
-import {HeadlessBotManager} from "./headless_bot_handler/HeadlessBotManager";
-import {exec} from "child_process";
+import Logger from "./logger";
+import {runCommandHandler} from "./command_handler/run";
+import {generateCommandHandler} from "./command_handler/generate";
 
 const main = async () => {
   const parser = new ArgumentParser({
     description: "A CLI program for interfacing with TankCOSC"
   })
+  parser.add_argument('-v', '--verbose', {
+    help: 'Enable verbose logging.',
+    required: false,
+    action: 'store_true'
+  })
+  parser.add_argument('-e', '--echo-commands', {
+    help: 'Enable echoing of the commands that are received from your bot to the console. This also enabled verbose logging.',
+    required: false,
+    action: 'store_true'
+  })
 
-  parser.add_argument('serverUrl', {
-    help: "The URL of the game server."
+  const subparsers = parser.add_subparsers({
+    dest: 'subcommand',
+    help: "Command to execute.",
+    required: true
   })
-  parser.add_argument('secretKey', {
-    help: "The secret key for your account. Used to log in to the game server."
+
+  const initParser = subparsers.add_parser('generate', {
+    description: "Generate a bot based on a language template."
   })
-  parser.add_argument('-c', '--command', {
+  initParser.add_argument('language', {
+    help: 'Language to generate the bot template for.'
+  })
+  initParser.add_argument('-n', '--name', {
+    help: "Name of the bot you want to generate. A new folder with this name will be created with the bot template inside it.",
+    required: true
+  })
+
+  const runParser = subparsers.add_parser('run', {
+    description: "Run your bot."
+  })
+  runParser.add_argument('-s', '--server', {
+    help: "The URL of the game server.",
+    required: true
+  })
+  runParser.add_argument('-k', '--key', {
+    help: "The secret key for your account. Used to log in to the game server.",
+    required: true
+  })
+  runParser.add_argument('-c', '--command', {
     help: "Define a command for the CLI to run to start your bot. The process that is started will be able to send/receive commands over stdout/stdin and log to the console over stderr.",
     required: true
   })
 
   const args = parser.parse_args()
 
-  console.log("Starting...")
+  if (args.verbose) {
+    Logger.level = "debug"
+  }
 
-  const manager = new HeadlessBotManager({
-    secretKey: args.secretKey,
-    serverUrl: args.serverUrl,
-    startBot: () => {
-      return exec(args.command, {
-        windowsHide: true
-      })
-    }
-  })
+  Logger.debug("Received arguments:")
+  Logger.debug(args)
 
-  await manager.run()
-
-  console.log("Main Completed.")
+  if (args.subcommand === "generate") {
+    await generateCommandHandler(args)
+  }
+  else if (args.subcommand === "run") {
+    await runCommandHandler(args)
+  }
+  else {
+    Logger.error("Invalid subcommand.")
+    return
+  }
 }
 
 (async () => {
@@ -45,6 +80,6 @@ const main = async () => {
     await main()
   }
   catch (e) {
-    console.error(e)
+    Logger.error(e)
   }
 })()

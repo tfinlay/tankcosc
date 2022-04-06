@@ -1,6 +1,7 @@
 import {ChildProcess} from "child_process"
 import {io, Socket} from "socket.io-client";
 import {BotExecutionManager} from "./BotExecutionManager";
+import Logger from "../logger";
 
 interface HeadlessBotHandlerProps {
   startBot: () => ChildProcess,
@@ -29,8 +30,9 @@ export class HeadlessBotManager {
   }
 
   public async run() {
+    Logger.info("🌐 Connecting...")
     await this.setupSocket()
-    console.log("Spawning bot...")
+    Logger.info("🤖 Spawning bot...")
     await this.spawnBotProcess()
   }
 
@@ -38,25 +40,32 @@ export class HeadlessBotManager {
     this.botProcess?.kill()
     this.socket?.disconnect()
 
-    console.log("Finished.")
+    Logger.debug("HeadlessBotManager Finished.")
   }
 
   setupSocket(): Promise<void> {
     return new Promise<void>((res, rej) => {
-      this.socket = io(this.serverUrl)
+      this.socket = io(this.serverUrl, {
+        reconnectionAttempts: 5
+      })
+      this.socket.on("connect_error", () => {
+        Logger.error("Failed to connect to game server.")
+        rej("Connection Error")
+      })
       this.socket.on("disconnect", () => {
-        console.log("DISCONNECTED :(")
+        this.onFinished()
+        res()
       })
       this.socket.on("requestLogin", () => {
-        console.log("Logging in...")
+        Logger.info("🤝 Logging in...")
         this.socket.emit("login", "player", this.secretKey)
       })
       this.socket.on("loginError", (message) => {
-        console.log(`Login error: ${message}`)
+        Logger.error(`Login error: ${message}`)
         rej("Login error")
       })
       this.socket.on("login_success", () => {
-        console.log("Logged in!")
+        Logger.info("🙌 Logged in!")
         res()
       })
     })
@@ -80,7 +89,7 @@ export class HeadlessBotManager {
 
     }
     catch (e) {
-      console.error(e)
+      Logger.error(e)
       this.onFinished()
     }
   }

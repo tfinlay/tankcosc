@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "argparse": "^2.0.1",
-    "socket.io-client": "^4.4.1"
+    "socket.io-client": "^4.4.1",
+    "winston": "^3.7.2"
   },
   "devDependencies": {
     "@types/argparse": "^2.0.10",
