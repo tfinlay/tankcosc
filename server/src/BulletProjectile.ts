@@ -22,7 +22,7 @@ export class BulletProjectile extends Projectile {
     }
 
     calculateDamage(tank: Tank): number {
-        return this.speed * 20
+        return this.speed * 1.75
     }
 
     protected getLineLength(ax, ay, bx, by) {

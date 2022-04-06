@@ -83,12 +83,12 @@ const PlaygroundSidePanel = observer(() => {
                     <Typography variant='h6'>Bot statistics</Typography>
                     <Grid container spacing={2}>
                         <Grid item sx={{textAlign: 'center'}} xs={6}>
-                            <Typography variant="h3" sx={{color: 'red'}}>{store.botHp ?? "-"}</Typography>
+                            <Typography variant="h3" sx={{color: 'red'}}>{store.botHp?.toFixed(2) ?? "-"}</Typography>
                             <Typography>Hit Points</Typography>
                         </Grid>
 
                         <Grid item sx={{textAlign: 'center'}} xs={6}>
-                            <Typography variant="h3" sx={{color: 'gold'}}>{store.botEnergy ?? "-"}</Typography>
+                            <Typography variant="h3" sx={{color: 'gold'}}>{store.botEnergy?.toFixed(2) ?? "-"}</Typography>
                             <Typography>Energy</Typography>
                         </Grid>
                     </Grid>

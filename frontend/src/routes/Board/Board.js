@@ -134,7 +134,7 @@ const drawOnBoardCanvas = (store, canvasEl) => {
         ctx.fillStyle = tank.colour
 
         // Name label
-        ctx.fillText(tank.playerName.slice(0, 7), tank.x, tank.y - 10)
+        ctx.fillText(tank.playerName.slice(0, 10), tank.x, tank.y - 10)
 
         // The tank itself
         const angleRads = tank.angle * (Math.PI/180)
@@ -149,7 +149,7 @@ const drawOnBoardCanvas = (store, canvasEl) => {
         ctx.arc(
             tank.x + (tank.radius * Math.cos(angleRads)),
             tank.y + (tank.radius * Math.sin(angleRads)),
-            2,
+            tank.radius / 3,
             0,
             2*Math.PI
         )
@@ -162,7 +162,7 @@ const drawOnBoardCanvas = (store, canvasEl) => {
             ctx.arc(
                 tank.x,
                 tank.y,
-                3,
+                tank.radius - (tank.radius / 5),
                 Math.PI / 2,
                 2 * Math.PI * tank.hpPercentage + (Math.PI/2)
             )
@@ -170,7 +170,7 @@ const drawOnBoardCanvas = (store, canvasEl) => {
 
             ctx.fillStyle = tank.colour
             ctx.beginPath()
-            ctx.arc(tank.x, tank.y, 1.5, 0, 2*Math.PI)
+            ctx.arc(tank.x, tank.y, tank.radius / 3, 0, 2*Math.PI)
             ctx.fill()
         }
     }
