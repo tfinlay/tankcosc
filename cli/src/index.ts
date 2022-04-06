@@ -27,14 +27,19 @@ const main = async () => {
     required: true
   })
 
+  const listTemplatesParser = subparsers.add_parser("listLangs", {
+    description: "Return a list of the languages that this utility can generate bots for."
+  })
+
   const initParser = subparsers.add_parser('generate', {
     description: "Generate a bot based on a language template."
   })
-  initParser.add_argument('language', {
-    help: 'Language to generate the bot template for.'
-  })
-  initParser.add_argument('-n', '--name', {
+  initParser.add_argument('name', {
     help: "Name of the bot you want to generate. A new folder with this name will be created with the bot template inside it.",
+    required: true
+  })
+  initParser.add_argument('-l', '--language', {
+    help: 'Language to generate the bot template for.',
     required: true
   })
 
