@@ -39,7 +39,7 @@ export class BotExecutionManager {
   subscribeToBotProcess() {
     this.botProcess.on("disconnect", () => this.finish("Disconnected from bot"))
     this.botProcess.on("exit", (code) => {
-      if (code !== 0) {
+      if (code !== 0 && code !== null) {
         Logger.warn("💥 It looks like your bot may have crashed!")
         Logger.warn(`💥 Bot exited with non-zero exit code: ${code}`)
       }
