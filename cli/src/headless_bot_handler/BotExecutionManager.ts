@@ -38,7 +38,13 @@ export class BotExecutionManager {
 
   subscribeToBotProcess() {
     this.botProcess.on("disconnect", () => this.finish("Disconnected from bot"))
-    this.botProcess.on("exit", () => this.finish("Bot process exited"))
+    this.botProcess.on("exit", (code) => {
+      if (code !== 0) {
+        Logger.warn("💥 It looks like your bot may have crashed!")
+        Logger.warn(`💥 Bot exited with non-zero exit code: ${code}`)
+      }
+      this.finish("Bot process exited")
+    })
     this.botProcess.on("close", () => this.finish("Bot process closed"))
     this.botProcess.on("error", (err) => {
       Logger.error(err)

@@ -8,23 +8,24 @@
     "prebuild": "tsc --noEmit",
     "build": "node ./build.mjs",
     "prepackage": "yarn build",
-    "package": "pkg .",
-    "devPackage": "yarn build && pkg ./bin/index.js -o devcli",
-    "start": "yarn devPackage && devcli"
+    "package": "pkg package.json"
   },
   "pkg": {
+    "scripts": "bin/**/*.js",
+    "assets": "assets/**/*",
     "targets": [
       "node16-linux-x64",
       "node16-macos-x64",
       "node16-win-x64"
     ],
-    "assets": ["templates/**/*"],
     "outputPath": "dist"
   },
   "dependencies": {
     "argparse": "^2.0.1",
     "socket.io-client": "^4.4.1",
-    "winston": "^3.7.2"
+    "winston": "^3.7.2",
+    "yaml": "^2.1.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/argparse": "^2.0.10",
