@@ -58,6 +58,7 @@ export class BotExecutionManager {
     this.botProcess.stderr.pipe(process.stderr)
     this.botProcess.stdout.on("data", (data) => {
       for (const line of data.trim().split("\n")) {
+        Logger.log("echo", `< ${line}`)
         this.handleBotCommand(line)
       }
     })
@@ -70,8 +71,6 @@ export class BotExecutionManager {
   }
 
   handleBotCommand(rawData: string) {
-    Logger.log("echo", rawData)
-
     if (this.lastCommandUuid !== undefined && !this.isAwaitingFirstMessage) {
       Logger.warn("Your bot has sent another command before receiving a response for an earlier command. Are you making sure to wait for a response before sending?")
       return
@@ -114,13 +113,19 @@ export class BotExecutionManager {
     if (this.botProcess) {
       // Forcefully flush stdin every time.
       this.botProcess.stdin.cork()
-      this.botProcess.stdin.write(`${data.hp} ${data.energy}\n`)
+
+      const writeLine = (line: string) => {
+        Logger.log("echo", `> ${line}`)
+        this.botProcess.stdin.write(`${line}\n`)
+      }
+
+      writeLine(`${data.hp} ${data.energy}`)
 
       if (data.scan !== undefined) {
         for (const line of data.scan) {
-          this.botProcess.stdin.write(`${line.relativeAngle} ${line.distance} ${line.name ?? "undefined"}\n`)
+          writeLine(`${line.relativeAngle} ${line.distance} ${line.name ?? "undefined"}`)
         }
-        this.botProcess.stdin.write('SCAN END\n')
+        writeLine('SCAN END')
       }
 
       this.botProcess.stdin.uncork()

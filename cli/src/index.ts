@@ -20,8 +20,8 @@ const main = async () => {
     required: false,
     action: 'store_true'
   })
-  parser.add_argument('-e', '--echo-commands', {
-    help: 'Enable echoing of the commands that are received from your bot to the console. This also enabled verbose logging.',
+  parser.add_argument('-e', '--echo-communication', {
+    help: 'Enable echoing of the commands that are received from your bot and the responses that are being sent to you bot, to the console. This also enables verbose logging.',
     required: false,
     action: 'store_true'
   })
@@ -70,9 +70,11 @@ const main = async () => {
 
   if (args.verbose) {
     setLogLevel(Logger.level = "debug")
+    Logger.log("debug", "Debug enabled.")
   }
-  else if (args.echo_commands) {
-    setLogLevel("echo")
+  if (args.echo_communication) {
+    setLogLevel(Logger.level = "echo")
+    Logger.log("echo", "Echo enabled. < is for commands from your bot. > is for data sent to your bot.")
   }
 
   Logger.debug("Received arguments:")

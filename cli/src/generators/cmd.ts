@@ -1,4 +1,3 @@
-import {queryUserForString} from "../util";
 import Logger from "../logger";
 import {BOT_CONFIG_FILE_NAME, saveBotConfig} from "../bot_config/io";
 import fs from "fs/promises";

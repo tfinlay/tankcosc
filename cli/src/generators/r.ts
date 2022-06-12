@@ -6,12 +6,12 @@ import {saveBotConfig} from "../bot_config/io";
 import Logger from "../logger";
 import {copyAssetFile} from "../asset_fs";
 
-const COMMAND = `python -u ./bot.py`
+const COMMAND = `Rscript ./bot.R`
 
-export const pythonGenerator: LanguageGeneratorFunction = async (targetDir: string, serverUrl: string, key: string) => {
+export const rGenerator: LanguageGeneratorFunction = async (targetDir: string, serverUrl: string, key: string) => {
   await fs.mkdir(targetDir)
-  await copyAssetFile(path.join(ASSETS_DIR_PATH, "templates", "python", "bot.py"), path.join(targetDir, "bot.py"))
+  await copyAssetFile(path.join(ASSETS_DIR_PATH, "templates", "R", "bot.R"), path.join(targetDir, "bot.R"))
   await saveBotConfig(targetDir, serverUrl, key, COMMAND)
 
-  Logger.info("Your bot now lives in the main() function of bot.py")
+  Logger.info("Your bot now lives in the main() function of bot.R")
 }

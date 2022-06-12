@@ -33,7 +33,6 @@ def scan():
 
     line = input()
     while line != 'SCAN END':
-        print(line)
         relativeAngle, distance, playerName = line.split(" ", 2)
         last_scan_result.append(ScanResult(float(relativeAngle), float(distance), playerName))
         line = input()

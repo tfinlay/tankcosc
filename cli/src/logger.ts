@@ -9,7 +9,7 @@ const loggingLevels = {
         error: 0
     },
     colors: {
-        echo: 'black',
+        echo: 'white',
         debug: 'magenta',
         info: 'blue',
         warn: 'yellow',
