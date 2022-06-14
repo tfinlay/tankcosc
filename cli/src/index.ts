@@ -106,13 +106,14 @@ const main = async () => {
   }
   else {
     Logger.error("Invalid subcommand.")
-    return
+    process.exit(1);
   }
 }
 
 (async () => {
   try {
     await main()
+    process.exit(0);
   }
   catch (e) {
     console.error("An unexpected error has occurred:\n", e)
