@@ -4,6 +4,8 @@ import { Player } from "../Player"
 import { app } from "./server"
 import { updateObservers } from "../tick/update_observers"
 import { ColourGenerator } from "../ColourGenerator"
+import { Request } from "express";
+import Config from "../config";
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/view.html')
@@ -11,12 +13,26 @@ app.get('/', (req, res) => {
 app.get('/board', (req, res) => {
     res.sendFile(__dirname + '/view_board.html')
 })
+app.get("/download/cli", (req: Request<{}, {}, {}, {platform: string}>, res) => {
+    if (Object.keys(Config.tankoCliServeInfo).includes(req.query.platform)) {
+        const fileInfo = Config.tankoCliServeInfo[req.query.platform]!
+        res.sendFile(fileInfo.localPath, {
+            root: "cli_assets",
+            headers: {
+                "Content-Disposition": `attachment; filename="${fileInfo.servedFilename}"`
+            }
+        })
+    }
+    else {
+        res.status(404).send(`Unrecognised or missing platform. Please specify one of the following platforms: ${Object.keys(Config.tankoCliServeInfo).join(", ")}.`)
+    }
+})
 
 app.get('/register', (req, res) => {
     res.sendFile(__dirname + '/register.html')
 })
 app.post('/register', async (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Type', 'application/json')
 
     const name = req.body.name
     if (typeof name === 'string' && name && (await db.getPlayerNames()).indexOf(name) === -1) {

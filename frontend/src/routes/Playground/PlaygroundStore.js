@@ -37,7 +37,7 @@ export class PlaygroundStore {
 
     filePickerOpen = false
 
-    displaySidePanel = false
+    displaySidePanel = true
     sidePanelTab = 'docs'
 
     logs = observable.array()

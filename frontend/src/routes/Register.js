@@ -15,6 +15,8 @@ import { Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } 
 import {LoadingNotYetAttempted, LoadingPending, LoadingDone, LoadingError} from '../LoadingStatus'
 import { GAME_SERVER_PATH } from '../config'
 import {Link} from 'react-router-dom'
+import {CliDownloadPopup} from "../component/CliDownloadPopup";
+import {Terminal} from "@mui/icons-material";
 
 export const Register = () => {
     const [username, setUsername] = useState("")
@@ -156,12 +158,35 @@ const PostRegistrationScreen = ({ userData }) => {
                                         <AttractionsIcon/>
                                     </Avatar>
                                 </ListItemAvatar>
-                                <ListItemText primary="Open Playground" />
+                                <ListItemText primary="Open Playground" secondary="Recommended for beginngers. JavaScript Only"/>
                             </ListItemButton>
                         </ListItem>
+
+                        <TankoCLIDownloadButton secretKey={userData.key}/>
                     </List>
                 </CardContent>
             </Card>
         </Box>
     )
+}
+
+const TankoCLIDownloadButton = ({secretKey}) => {
+  const [popupOpen, setPopupOpen] = useState(false)
+
+  return (
+      <>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => setPopupOpen(true)}>
+            <ListItemAvatar>
+              <Avatar>
+                <Terminal/>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary="Download Tanko CLI" secondary="Recommended for all skill levels. Language Agnostic" />
+          </ListItemButton>
+        </ListItem>
+
+        <CliDownloadPopup open={popupOpen} onClose={() => setPopupOpen(false)} secretKey={secretKey}/>
+      </>
+  )
 }
