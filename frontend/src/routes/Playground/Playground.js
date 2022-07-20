@@ -8,9 +8,10 @@ import {useCallback, useEffect, useState} from "react"
 import { PlaygroundStore } from "./PlaygroundStore"
 import Editor from "@monaco-editor/react"
 import { PlaygroundToolbar } from "./PlaygroundToolbar"
-import { Paper, Typography, Tabs, Tab, Toolbar } from "@mui/material"
+import {Paper, Typography, Tabs, Tab, Toolbar, useTheme} from "@mui/material"
 import Collapse from '@mui/material/Collapse';
 import {SimpleGameDocumentation} from "../../component/SimpleGameDocumentation";
+import {useSystemTheme} from "../../hook/useSystemTheme";
 
 export const Playground = () => {
     const key = useParams().key
@@ -34,6 +35,27 @@ export const Playground = () => {
 const PlaygroundContent = observer(() => {
     const store = usePlaygroundStore()
 
+    return (
+        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'stretch', alignItems: 'stretch', height: '100vh', overflow: 'hidden'}}>
+            <PlaygroundToolbar />
+
+            <Grid container spacing={2} sx={{flex: 1, alignItems: 'stretch'}}>
+                <Grid item xs={(store.displaySidePanel) ? 7 : 12}>
+                    <PlaygroundEditor/>
+                </Grid>
+
+                {(store.displaySidePanel) ? (
+                    <PlaygroundSidePanel />
+                ) : null}
+            </Grid>
+        </Box>
+    )
+})
+
+const PlaygroundEditor = observer(() => {
+    const store = usePlaygroundStore()
+    const theme = useTheme()
+
     const onEditorMounted = useCallback((editor, monaco) => {
         console.log("Monaco editor mounted")
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => store.saveToCurrentFile())
@@ -48,26 +70,15 @@ const PlaygroundContent = observer(() => {
     }, [store])
 
     return (
-        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'stretch', alignItems: 'stretch', height: '100vh', overflow: 'hidden'}}>
-            <PlaygroundToolbar />
-
-            <Grid container spacing={2} sx={{flex: 1, alignItems: 'stretch'}}>
-                <Grid item xs={(store.displaySidePanel) ? 7 : 12}>
-                    <Editor
-                        height="calc(100vh - 68.5px)"
-                        language="javascript"
-                        value={store.code}
-                        loading={<CircularProgress/>}
-                        onChange={value => store.onCodeChange(value)}
-                        onMount={onEditorMounted}
-                    />
-                </Grid>
-
-                {(store.displaySidePanel) ? (
-                    <PlaygroundSidePanel />
-                ) : null}
-            </Grid>
-        </Box>
+        <Editor
+            height="calc(100vh - 68.5px)"
+            language="javascript"
+            value={store.code}
+            loading={<CircularProgress/>}
+            onChange={value => store.onCodeChange(value)}
+            onMount={onEditorMounted}
+            theme={(theme.palette.mode === "light") ? "light" : "vs-dark"}
+        />
     )
 })
 
