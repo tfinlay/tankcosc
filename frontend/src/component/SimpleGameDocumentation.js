@@ -1,5 +1,6 @@
 import {Typography} from "@mui/material";
 import Box from "@mui/material/Box";
+import {MathSpan} from "./MathSpan";
 
 export const SimpleGameDocumentation = () => {
   return (
@@ -52,7 +53,7 @@ export const SimpleGameDocumentation = () => {
           Takes 1 turn. Consumes the given amount of energy and moves the tank a distance in the direction that it is facing.
         </Typography>
         <Typography variant="body1" sx={{marginTop: 1}}>
-          The distance travelled is given by this equation: <code>log10(log10(energy)) * 4 + 1</code>
+          The distance travelled is given by this equation: <MathSpan math={`\\sqrt{\\sqrt{energy}}`}/>
         </Typography>
 
         <Typography variant="h6" sx={{fontFamily: 'monospace', marginTop: 1}}>heal(energy)</Typography>
